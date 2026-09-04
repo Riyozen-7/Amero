@@ -146,6 +146,21 @@
             <span class="form-error" id="errAddress">Please enter your address.</span>
           </div>
           <div class="form-group">
+  <label for="deliveryArea">
+    Delivery Area <span class="required">*</span>
+  </label>
+
+  <select id="deliveryArea" name="deliveryArea" required>
+    <option value="">Select delivery area</option>
+    <option value="chittagong">
+      Inside Chittagong — ৳70
+    </option>
+    <option value="outside">
+      Outside Chittagong — ৳120
+    </option>
+  </select>
+</div>
+          <div class="form-group">
             <label for="custNotes">Order Notes</label>
             <textarea id="custNotes" name="custNotes" rows="4" placeholder="Special instructions for your order..."></textarea>
           </div>
