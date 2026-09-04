@@ -1118,179 +1118,247 @@ function updateBilling() {
 // CHECKOUT FORM
 // ============================================
 
-checkoutForm.addEventListener(
-  'submit',
-  function(e) {
+// ============================================
+// CHECKOUT FORM — WHATSAPP ORDERS
+// ============================================
 
-    e.preventDefault();
+checkoutForm.addEventListener('submit', function (e) {
+  e.preventDefault();
 
+  // Customer information
+  const name = document.getElementById('custName');
+  const phone = document.getElementById('custPhone');
+  const address = document.getElementById('custAddress');
 
-    // ---------- VALIDATION ----------
+  const notes = document.getElementById('custNotes');
 
-    const name =
-      document.getElementById(
-        'custName'
-      );
+  let valid = true;
 
-    const email =
-      document.getElementById(
-        'custEmail'
-      );
+  // ============================================
+  // VALIDATE NAME
+  // ============================================
 
-    const address =
-      document.getElementById(
-        'custAddress'
-      );
+  if (name.value.trim() === '') {
 
-
-    let valid = true;
-
-
-    // ---------- NAME ----------
-
-    if (
-      name.value.trim() === ''
-    ) {
-
-      name.classList.add(
-        'error'
-      );
-
-      document
-        .getElementById('errName')
-        .classList.add(
-          'visible'
-        );
-
-      valid = false;
-
-    } else {
-
-      name.classList.remove(
-        'error'
-      );
-
-      document
-        .getElementById('errName')
-        .classList.remove(
-          'visible'
-        );
-    }
-
-
-    // ---------- EMAIL ----------
-
-    const emailPattern =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
-    if (
-      !emailPattern.test(
-        email.value.trim()
-      )
-    ) {
-
-      email.classList.add(
-        'error'
-      );
-
-      document
-        .getElementById('errEmail')
-        .classList.add(
-          'visible'
-        );
-
-      valid = false;
-
-    } else {
-
-      email.classList.remove(
-        'error'
-      );
-
-      document
-        .getElementById('errEmail')
-        .classList.remove(
-          'visible'
-        );
-    }
-
-
-    // ---------- ADDRESS ----------
-
-    if (
-      address.value.trim() === ''
-    ) {
-
-      address.classList.add(
-        'error'
-      );
-
-      document
-        .getElementById('errAddress')
-        .classList.add(
-          'visible'
-        );
-
-      valid = false;
-
-    } else {
-
-      address.classList.remove(
-        'error'
-      );
-
-      document
-        .getElementById('errAddress')
-        .classList.remove(
-          'visible'
-        );
-    }
-
-
-    if (!valid) return;
-
-
-    // ---------- CONFIRMATION ----------
+    name.classList.add('error');
 
     document
-      .getElementById(
-        'confirmName'
-      )
-      .textContent =
-      name.value.trim();
+      .getElementById('errName')
+      .classList.add('visible');
 
+    valid = false;
 
-    document
-      .getElementById(
-        'confirmEmail'
-      )
-      .textContent =
-      email.value.trim();
+  } else {
 
-
-    checkoutForm.style.display =
-      'none';
-
+    name.classList.remove('error');
 
     document
-      .getElementById(
-        'orderConfirmation'
-      )
-      .classList.add(
-        'visible'
-      );
-
-
-    // ---------- RESET CART ----------
-
-    cart = [];
-
-    updateCart();
-
+      .getElementById('errName')
+      .classList.remove('visible');
   }
-);
 
+
+  // ============================================
+  // VALIDATE PHONE
+  // ============================================
+
+  const phonePattern = /^01[3-9]\d{8}$/;
+
+  const cleanPhone =
+    phone.value
+      .trim()
+      .replace(/\s+/g, '');
+
+
+  if (!phonePattern.test(cleanPhone)) {
+
+    phone.classList.add('error');
+
+    document
+      .getElementById('errPhone')
+      .classList.add('visible');
+
+    valid = false;
+
+  } else {
+
+    phone.classList.remove('error');
+
+    document
+      .getElementById('errPhone')
+      .classList.remove('visible');
+  }
+
+
+  // ============================================
+  // VALIDATE ADDRESS
+  // ============================================
+
+  if (address.value.trim() === '') {
+
+    address.classList.add('error');
+
+    document
+      .getElementById('errAddress')
+      .classList.add('visible');
+
+    valid = false;
+
+  } else {
+
+    address.classList.remove('error');
+
+    document
+      .getElementById('errAddress')
+      .classList.remove('visible');
+  }
+
+
+  // Stop if validation failed
+  if (!valid) return;
+
+
+  // ============================================
+  // DON'T ALLOW EMPTY CART
+  // ============================================
+
+  if (cart.length === 0) {
+
+    alert('Your cart is empty. Please add a product first.');
+
+    return;
+  }
+
+
+  // ============================================
+  // CALCULATE TOTAL
+  // ============================================
+
+  const subtotal =
+    cart.reduce(
+      (sum, item) =>
+        sum + item.price * item.qty,
+      0
+    );
+
+  const tax =
+    subtotal * 0.08;
+
+  const total =
+    subtotal + tax;
+
+
+  // ============================================
+  // CREATE ORDER MESSAGE
+  // ============================================
+
+  let message =
+`🛍️ *NEW AMERO ORDER*
+
+👤 *Customer*
+Name: ${name.value.trim()}
+Phone: ${cleanPhone}
+
+📍 *Shipping Address*
+${address.value.trim()}
+
+🛒 *ORDER ITEMS*
+`;
+
+
+  cart.forEach((item, index) => {
+
+    message +=
+`
+${index + 1}. ${item.name}
+   Size: ${item.size}
+   Quantity: ${item.qty}
+   Price: ${CURRENCY}${item.price * item.qty}
+`;
+
+  });
+
+
+  message +=
+`
+💰 *ORDER SUMMARY*
+Subtotal: ${CURRENCY}${subtotal.toFixed(0)}
+Tax: ${CURRENCY}${tax.toFixed(0)}
+Shipping: Free
+*TOTAL: ${CURRENCY}${total.toFixed(0)}*
+`;
+
+
+  // ============================================
+  // ORDER NOTES
+  // ============================================
+
+  if (
+    notes &&
+    notes.value.trim() !== ''
+  ) {
+
+    message +=
+`
+📝 *Order Notes*
+${notes.value.trim()}
+`;
+  }
+
+
+  message +=
+`
+Thank you for shopping with *Amero* ❤️`;
+
+
+  // ============================================
+  // WHATSAPP NUMBER
+  // ============================================
+
+  // 01880471287 → international format
+  const whatsappNumber =
+    '8801880471287';
+
+
+  // Encode message safely for WhatsApp
+  const whatsappURL =
+    `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+
+  // ============================================
+  // OPEN WHATSAPP
+  // ============================================
+
+  window.open(
+    whatsappURL,
+    '_blank'
+  );
+
+
+  // ============================================
+  // SHOW CONFIRMATION
+  // ============================================
+
+  document
+    .getElementById('confirmName')
+    .textContent =
+    name.value.trim();
+
+
+  checkoutForm.style.display =
+    'none';
+
+
+  document
+    .getElementById('orderConfirmation')
+    .classList.add('visible');
+
+
+  // Clear cart after sending
+  cart = [];
+
+  updateCart();
+});
 
 // ============================================
 // RESET CHECKOUT
