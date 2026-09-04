@@ -15,7 +15,7 @@ const products = [
     desc: 'Chest 46 · Length 28 · Old-money striped seersucker weave. Quality 9.5/10.',
     price: 750,
     icon: 'fa-solid fa-shirt',
-    img: null,
+    img: images/font.jpg.jpeg,
     sizes: [
       { size: 'L/XXL', stock: 1 },
     ],
