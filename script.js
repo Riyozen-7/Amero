@@ -19,9 +19,9 @@ const products = [
 
     // Add your product photos here
     images: [
-      'images/product-1/front.jpg',
-      'images/product-1/back.jpg',
-      'images/product-1/side.jpg'
+      'images/old1/front.jpg',
+      'images/old1/back.jpg',
+      'images/old1/side.jpg'
     ],
 
     sizes: [
@@ -37,9 +37,9 @@ const products = [
     icon: 'fa-solid fa-shirt',
 
     images: [
-      'images/product-2/front.jpg',
-      'images/product-2/back.jpg',
-      'images/product-2/side.jpg'
+      'images/tsh1/front.jpg',
+      'images/tsh1/back.jpg',
+      'images/tsh1/side.jpg'
     ],
 
     sizes: [
@@ -57,9 +57,9 @@ const products = [
     icon: 'fa-solid fa-shirt',
 
     images: [
-      'images/product-3/front.jpg',
-      'images/product-3/back.jpg',
-      'images/product-3/side.jpg'
+      'images/tsh2/front.jpg',
+      'images/tsh2/back.jpg',
+      'images/tsh2/side.jpg'
     ],
 
     sizes: [
