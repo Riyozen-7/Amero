@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Norrland Coffee Co. — Small-batch roasted coffee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1E1B16;
+    --ink-soft: #55503F;
+    --paper: #EDEAE3;
+    --paper-raised: #F7F5F0;
+    --accent: #6E7B5E;
+    --accent-dark: #4B5540;
+    --line: #D9D3C7;
+    --error: #A13D2A;
+    --radius: 3px;
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+
+  img, svg { display: block; max-width: 100%; }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-dark);
+    outline-offset: 2px;
+  }
+
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ---------- Header ---------- */
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(237, 234, 227, 0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav a {
+    text-decoration: none;
+    font-size: 15px;
+    color: var(--ink-soft);
+    position: relative;
+    padding-bottom: 3px;
+  }
+
+  nav a:hover { color: var(--ink); }
+
+  .cart-link {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .cart-count {
+    background: var(--accent-dark);
+    color: var(--paper-raised);
+    font-size: 12px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+
+  /* ---------- Hero ---------- */
+
+  .hero {
+    padding: 96px 0 84px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 56px;
+    align-items: end;
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(40px, 5.4vw, 64px);
+    line-height: 1.06;
+    letter-spacing: -0.015em;
+    margin: 0 0 22px;
+  }
+
+  .hero p {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0 0 30px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    border-radius: var(--radius);
+    padding: 13px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper-raised);
+  }
+
+  .btn-primary:hover { background: var(--accent-dark); }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--accent-dark);
+    color: var(--accent-dark);
+  }
+
+  .hero-note {
+    border-left: 2px solid var(--accent);
+    padding-left: 18px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .hero-note strong {
+    display: block;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 500;
+  }
+
+  /* ---------- Section shared ---------- */
+
+  section { padding: 76px 0; border-bottom: 1px solid var(--line); }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .section-head h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 32px;
+    margin: 0;
+  }
+
+  .section-head p {
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0;
+    max-width: 40ch;
+    text-align: right;
+  }
+
+  /* ---------- Products ---------- */
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .product-card {
+    background: var(--paper-raised);
+    padding: 26px 24px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-lot {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+
+  .product-photo {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+    background: linear-gradient(155deg, #DCD5C4 0%, #C9BFA6 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 30% 25%, rgba(30,27,22,0.16), transparent 45%),
+      radial-gradient(circle at 70% 70%, rgba(30,27,22,0.10), transparent 50%);
+  }
+
+  .product-card h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 20px;
+    margin: 0 0 6px;
+  }
+
+  .product-card .origin {
+    font-size: 13px;
+    color: var(--accent-dark);
+    margin: 0 0 10px;
+  }
+
+  .product-card .desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    flex-grow: 1;
+  }
+
+  .product-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .price {
+    font-family: var(--font-display);
+    font-size: 19px;
+  }
+
+  .add-btn {
+    background: transparent;
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .add-btn:hover { background: var(--ink); color: var(--paper-raised); }
+
+  .add-btn.added {
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+    color: var(--paper-raised);
+  }
+
+  /* ---------- Cart ---------- */
+
+  .cart-empty {
+    color: var(--ink-soft);
+    font-size: 15px;
+    padding: 30px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .cart-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cart-table th {
+    text-align: left;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cart-table td {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+    font-size: 15px;
+  }
+
+  .cart-item-name {
+    font-family: var(--font-display);
+    font-size: 17px;
+  }
+
+  .cart-item-origin {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .qty-control {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+
+  .qty-control button {
+    background: none;
+    border: none;
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .qty-control button:hover { background: var(--line); }
+
+  .qty-control span {
+    width: 28px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .remove-link {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 13px;
+    text-decoration: underline;
+    padding: 0;
+  }
+
+  .remove-link:hover { color: var(--error); }
+
+  .cart-summary {
+    margin-top: 24px;
+    margin-left: auto;
+    max-width: 320px;
+    text-align: right;
+  }
+
+  .cart-summary .line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--ink-soft);
+    padding: 6px 0;
+  }
+
+  .cart-summary .line.total {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 22px;
+    padding-top: 14px;
+    margin-top: 6px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* ---------- Order / Billing ---------- */
+
+  .order-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 7px;
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    border-color: var(--accent-dark);
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .billing-box {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px;
+    position: sticky;
+    top: 90px;
+  }
+
+  .billing-box h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 19px;
+    margin: 0 0 20px;
+  }
+
+  .billing-box .line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--ink-soft);
+    padding: 8px 0;
+  }
+
+  .billing-box .line.total {
+    color: var(--ink);
+    font-weight: 500;
+    font-size: 17px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+    margin-top: 6px;
+  }
+
+  .order-status {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--accent-dark);
+    display: none;
+  }
+
+  .order-status.show { display: block; }
+
+  /* ---------- Footer ---------- */
+
+  footer {
+    padding: 52px 0 40px;
+  }
+
+  .footer-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .footer-brand .wordmark { display: block; margin-bottom: 10px; }
+
+  .footer-brand p {
+    color: var(--ink-soft);
+    font-size: 14px;
+    max-width: 34ch;
+    margin: 0;
+  }
+
+  .footer-col h4 {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    margin: 0 0 12px;
+  }
+
+  .footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-col li { margin-bottom: 8px; }
+
+  .footer-col a {
+    text-decoration: none;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  .footer-col a:hover { color: var(--accent-dark); }
+
+  .social-row {
+    display: flex;
+    gap: 14px;
+    margin-top: 4px;
+  }
+
+  .social-row a {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .social-row a:hover { border-color: var(--accent-dark); }
+
+  .copyright {
+    margin-top: 44px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Responsive ---------- */
+
+  @media (max-width: 860px) {
+    .wrap { padding: 0 20px; }
+    nav ul { display: none; }
+    .nav-toggle { display: block; }
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .product-grid { grid-template-columns: 1fr 1fr; }
+    .order-grid { grid-template-columns: 1fr; }
+    .billing-box { position: static; }
+    .section-head { flex-direction: column; align-items: flex-start; }
+    .section-head p { text-align: left; }
+  }
+
+  @media (max-width: 560px) {
+    .product-grid { grid-template-columns: 1fr; }
+    .field-row { grid-template-columns: 1fr; }
+    .hero { padding: 64px 0 56px; }
+    section { padding: 56px 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav-row">
+    <a href="#home" class="wordmark">Norrland Coffee Co.</a>
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#cart" class="cart-link">Cart <span class="cart-count" id="navCartCount">0</span></a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="home">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>Coffee roasted in lots of forty kilos, never more.</h1>
+      <p>We buy direct from three family farms, roast within a week of order, and ship the bag with the roast date printed on it — so what you drink is what left the drum, not a guess at freshness.</p>
+      <a href="#products" class="btn btn-primary">Shop the current roast</a>
+    </div>
+    <div class="hero-note">
+      <strong>3 origins</strong>
+      Ethiopia, Colombia and Sumatra, rotating by harvest season.
+    </div>
+  </div>
+</section>
+
+<section id="products">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Current roast</h2>
+      <p>Six coffees on the board this week. Bags ship within two days of your order.</p>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</section>
+
+<section id="cart">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Your cart</h2>
+      <p>Adjust quantities before checking out below.</p>
+    </div>
+    <div id="cartArea"></div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Order details</h2>
+      <p>We'll email a roast confirmation and tracking once it ships.</p>
+    </div>
+    <div class="order-grid">
+      <form id="orderForm">
+        <div class="field-row">
+          <div class="field">
+            <label for="fullName">Full name</label>
+            <input type="text" id="fullName" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="address">Shipping address</label>
+          <input type="text" id="address" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="city">City</label>
+            <input type="text" id="city" required>
+          </div>
+          <div class="field">
+            <label for="postcode">Postal code</label>
+            <input type="text" id="postcode" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="notes">Order notes (grind preference, delivery instructions)</label>
+          <textarea id="notes" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" id="placeOrderBtn">Place order</button>
+        <div class="order-status" id="orderStatus"></div>
+      </form>
+
+      <div class="billing-box">
+        <h3>Billing summary</h3>
+        <div class="line"><span>Subtotal</span><span id="billSubtotal">$0.00</span></div>
+        <div class="line"><span>Shipping</span><span id="billShipping">$0.00</span></div>
+        <div class="line"><span>Tax (est.)</span><span id="billTax">$0.00</span></div>
+        <div class="line total"><span>Total due</span><span id="billTotal">$0.00</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="wordmark">Norrland Coffee Co.</span>
+        <p>Small-batch roastery. Orders roasted to schedule, not pulled from a warehouse shelf.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:hello@norrlandcoffee.example">hello@norrlandcoffee.example</a></li>
+          <li><a href="tel:+10000000000">+1 (000) 000-0000</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow</h4>
+        <div class="social-row">
+          <a href="#" aria-label="Instagram">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+          </a>
+          <a href="#" aria-label="Twitter/X">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7l-5.5-7.2L4.5 22H1.3l8.2-9.3L1 2h7.2l5 6.6L18.9 2z"/></svg>
+          </a>
+          <a href="#" aria-label="Facebook">
+            <svg width="9" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">© 2026 Norrland Coffee Co. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  const products = [
+    { id: 'p1', lot: 'Lot 041', name: 'Yirgacheffe', origin: 'Ethiopia · washed', desc: 'Bright, floral, a jasmine-and-citrus cup that stays light through the finish.', price: 19 },
+    { id: 'p2', lot: 'Lot 038', name: 'Huila Reserve', origin: 'Colombia · washed', desc: 'Caramel and red apple with a clean, syrupy body. Our steadiest seller.', price: 18 },
+    { id: 'p3', lot: 'Lot 044', name: 'Gayo Mountain', origin: 'Sumatra · wet-hulled', desc: 'Low-acid, earthy and full — cedar and dark chocolate in the cup.', price: 20 },
+    { id: 'p4', lot: 'Lot 040', name: 'Guji Natural', origin: 'Ethiopia · natural', desc: 'Berry-forward and winey, closer to a light dessert than a coffee.', price: 21 },
+    { id: 'p5', lot: 'Lot 036', name: 'Tolima Decaf', origin: 'Colombia · sugarcane process', desc: 'Full-flavoured decaf — cocoa and brown sugar, no compromise cup.', price: 19 },
+    { id: 'p6', lot: 'Lot 042', name: 'House Blend', origin: 'Ethiopia + Colombia', desc: 'Our everyday drip blend, balanced for a filter brew or a moka pot.', price: 16 }
+  ];
+
+  let cart = {}; // id -> quantity
+
+  const SHIPPING = 5;
+  const TAX_RATE = 0.07;
+
+  function formatMoney(n) {
+    return '$' + n.toFixed(2);
+  }
+
+  function renderProducts() {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = products.map(p => `
+      <div class="product-card">
+        <div class="product-lot">${p.lot}</div>
+        <div class="product-photo"></div>
+        <h3>${p.name}</h3>
+        <div class="origin">${p.origin}</div>
+        <p class="desc">${p.desc}</p>
+        <div class="product-foot">
+          <span class="price">${formatMoney(p.price)}</span>
+          <button class="add-btn" data-id="${p.id}">Add to cart</button>
+        </div>
+      </div>
+    `).join('');
+
+    grid.querySelectorAll('.add-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        addToCart(btn.dataset.id);
+        btn.textContent = 'Added';
+        btn.classList.add('added');
+        setTimeout(() => {
+          btn.textContent = 'Add to cart';
+          btn.classList.remove('added');
+        }, 1000);
+      });
+    });
+  }
+
+  function addToCart(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    renderCart();
+  }
+
+  function changeQty(id, delta) {
+    if (!cart[id]) return;
+    cart[id] += delta;
+    if (cart[id] <= 0) delete cart[id];
+    renderCart();
+  }
+
+  function removeItem(id) {
+    delete cart[id];
+    renderCart();
+  }
+
+  function getSubtotal() {
+    return Object.entries(cart).reduce((sum, [id, qty]) => {
+      const p = products.find(p => p.id === id);
+      return sum + (p ? p.price * qty : 0);
+    }, 0);
+  }
+
+  function renderCart() {
+    const area = document.getElementById('cartArea');
+    const entries = Object.entries(cart);
+    const totalCount = entries.reduce((s, [, q]) => s + q, 0);
+    document.getElementById('navCartCount').textContent = totalCount;
+
+    if (entries.length === 0) {
+      area.innerHTML = `<div class="cart-empty">Your cart is empty — add a coffee above to get started.</div>`;
+    } else {
+      const rows = entries.map(([id, qty]) => {
+        const p = products.find(p => p.id === id);
+        return `
+          <tr>
+            <td>
+              <div class="cart-item-name">${p.name}</div>
+              <div class="cart-item-origin">${p.origin}</div>
+            </td>
+            <td>
+              <div class="qty-control">
+                <button type="button" data-id="${id}" data-delta="-1" aria-label="Decrease quantity">−</button>
+                <span>${qty}</span>
+                <button type="button" data-id="${id}" data-delta="1" aria-label="Increase quantity">+</button>
+              </div>
+            </td>
+            <td>${formatMoney(p.price)}</td>
+            <td>${formatMoney(p.price * qty)}</td>
+            <td><button type="button" class="remove-link" data-remove="${id}">Remove</button></td>
+          </tr>
+        `;
+      }).join('');
+
+      area.innerHTML = `
+        <table class="cart-table">
+          <thead>
+            <tr><th>Coffee</th><th>Qty</th><th>Price</th><th>Line total</th><th></th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+
+      area.querySelectorAll('[data-delta]').forEach(btn => {
+        btn.addEventListener('click', () => changeQty(btn.dataset.id, parseInt(btn.dataset.delta, 10)));
+      });
+      area.querySelectorAll('[data-remove]').forEach(btn => {
+        btn.addEventListener('click', () => removeItem(btn.dataset.remove));
+      });
+    }
+
+    renderBilling();
+  }
+
+  function renderBilling() {
+    const subtotal = getSubtotal();
+    const hasItems = subtotal > 0;
+    const shipping = hasItems ? SHIPPING : 0;
+    const tax = subtotal * TAX_RATE;
+    const total = subtotal + shipping + tax;
+
+    document.getElementById('billSubtotal').textContent = formatMoney(subtotal);
+    document.getElementById('billShipping').textContent = formatMoney(shipping);
+    document.getElementById('billTax').textContent = formatMoney(tax);
+    document.getElementById('billTotal').textContent = formatMoney(total);
+  }
+
+  document.getElementById('orderForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const status = document.getElementById('orderStatus');
+    if (Object.keys(cart).length === 0) {
+      status.textContent = 'Add at least one coffee to your cart before placing an order.';
+      status.classList.add('show');
+      return;
+    }
+    status.textContent = 'Order placed — a confirmation has been sent to your email.';
+    status.classList.add('show');
+    cart = {};
+    renderCart();
+    e.target.reset();
+  });
+
+  renderProducts();
+  renderCart();
+</script>
+
+</body>
+</html>
