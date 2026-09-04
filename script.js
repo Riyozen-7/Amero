@@ -12,13 +12,13 @@ const products = [
     price: 750,
     icon: 'fa-solid fa-shirt',
 
-    img: 'images/product-1/front.jpg',
+    img: 'images/product-1/front.jpg.jpeg',
 
     images: [
-      'images/product-1/front.jpg',
-      'images/product-1/back.jpg',
-      'images/product-1/side.jpg'
-    ],
+  'images/product-1/front.jpg.jpeg',
+  'images/product-1/back.jpg.jpeg',
+  'images/product-1/side.jpg.jpeg'
+],
 
     sizes: [
       { size: 'L/XXL', stock: 1 }
@@ -32,13 +32,13 @@ const products = [
     price: 450,
     icon: 'fa-solid fa-shirt',
 
-    img: 'images/product-2/front.jpg',
+    img: 'images/product-2/front.jpg.jpeg',
 
-    images: [
-      'images/product-2/front.jpg',
-      'images/product-2/back.jpg',
-      'images/product-2/side.jpg'
-    ],
+   images: [
+  'images/product-2/front.jpg.jpeg',
+  'images/product-2/back.jpg.jpeg',
+  'images/product-2/side.jpg.jpeg'
+],
 
     sizes: [
       { size: 'M', stock: 1 },
@@ -54,13 +54,13 @@ const products = [
     price: 450,
     icon: 'fa-solid fa-shirt',
 
-    img: 'images/product-3/front.jpg',
+    img: 'images/product-3/front.jpg.jpeg',
 
     images: [
-      'images/product-3/front.jpg',
-      'images/product-3/back.jpg',
-      'images/product-3/side.jpg'
-    ],
+  'images/product-3/front.jpg.jpeg',
+  'images/product-3/back.jpg.jpeg',
+  'images/product-3/side.jpg.jpeg'
+],
 
     sizes: [
       { size: 'M', stock: 1 },
