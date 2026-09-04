@@ -1125,14 +1125,15 @@ function updateBilling() {
 checkoutForm.addEventListener('submit', function (e) {
   e.preventDefault();
 
-  // Customer information
   const name = document.getElementById('custName');
   const phone = document.getElementById('custPhone');
   const address = document.getElementById('custAddress');
-
   const notes = document.getElementById('custNotes');
 
+  const deliveryArea = document.getElementById('deliveryArea');
+
   let valid = true;
+
 
   // ============================================
   // VALIDATE NAME
@@ -1214,12 +1215,29 @@ checkoutForm.addEventListener('submit', function (e) {
   }
 
 
-  // Stop if validation failed
+  // ============================================
+  // VALIDATE DELIVERY AREA
+  // ============================================
+
+  if (!deliveryArea || deliveryArea.value === '') {
+
+    if (deliveryArea) {
+      deliveryArea.classList.add('error');
+    }
+
+    valid = false;
+
+  } else {
+
+    deliveryArea.classList.remove('error');
+  }
+
+
   if (!valid) return;
 
 
   // ============================================
-  // DON'T ALLOW EMPTY CART
+  // CHECK CART
   // ============================================
 
   if (cart.length === 0) {
@@ -1231,7 +1249,7 @@ checkoutForm.addEventListener('submit', function (e) {
 
 
   // ============================================
-  // CALCULATE TOTAL
+  // CALCULATE SUBTOTAL
   // ============================================
 
   const subtotal =
@@ -1241,26 +1259,52 @@ checkoutForm.addEventListener('submit', function (e) {
       0
     );
 
-  const tax =
-    subtotal * 0.08;
 
-  const total =
-    subtotal + tax;
+  // ============================================
+  // DELIVERY FEE
+  // ============================================
+
+  let deliveryFee = 0;
+  let deliveryAreaText = '';
+
+
+  if (deliveryArea.value === 'chittagong') {
+
+    deliveryFee = 70;
+    deliveryAreaText = 'Inside Chittagong';
+
+  } else if (deliveryArea.value === 'outside') {
+
+    deliveryFee = 120;
+    deliveryAreaText = 'Outside Chittagong';
+  }
 
 
   // ============================================
-  // CREATE ORDER MESSAGE
+  // FINAL TOTAL
+  // ============================================
+
+  const total =
+    subtotal + deliveryFee;
+
+
+  // ============================================
+  // CREATE WHATSAPP MESSAGE
   // ============================================
 
   let message =
 `🛍️ *NEW AMERO ORDER*
 
-👤 *Customer*
+👤 *CUSTOMER*
 Name: ${name.value.trim()}
 Phone: ${cleanPhone}
 
-📍 *Shipping Address*
+📍 *SHIPPING ADDRESS*
 ${address.value.trim()}
+
+🚚 *DELIVERY*
+Area: ${deliveryAreaText}
+Delivery Fee: ${CURRENCY}${deliveryFee}
 
 🛒 *ORDER ITEMS*
 `;
@@ -1273,7 +1317,7 @@ ${address.value.trim()}
 ${index + 1}. ${item.name}
    Size: ${item.size}
    Quantity: ${item.qty}
-   Price: ${CURRENCY}${item.price * item.qty}
+   Price: ${CURRENCY}${(item.price * item.qty).toFixed(0)}
 `;
 
   });
@@ -1283,8 +1327,7 @@ ${index + 1}. ${item.name}
 `
 💰 *ORDER SUMMARY*
 Subtotal: ${CURRENCY}${subtotal.toFixed(0)}
-Tax: ${CURRENCY}${tax.toFixed(0)}
-Shipping: Free
+Delivery: ${CURRENCY}${deliveryFee}
 *TOTAL: ${CURRENCY}${total.toFixed(0)}*
 `;
 
@@ -1300,7 +1343,7 @@ Shipping: Free
 
     message +=
 `
-📝 *Order Notes*
+📝 *ORDER NOTES*
 ${notes.value.trim()}
 `;
   }
@@ -1312,15 +1355,17 @@ Thank you for shopping with *Amero* ❤️`;
 
 
   // ============================================
-  // WHATSAPP NUMBER
+  // YOUR WHATSAPP NUMBER
   // ============================================
 
-  // 01880471287 → international format
   const whatsappNumber =
     '8801880471287';
 
 
-  // Encode message safely for WhatsApp
+  // ============================================
+  // CREATE WHATSAPP URL
+  // ============================================
+
   const whatsappURL =
     `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
@@ -1354,7 +1399,7 @@ Thank you for shopping with *Amero* ❤️`;
     .classList.add('visible');
 
 
-  // Clear cart after sending
+  // Clear cart
   cart = [];
 
   updateCart();
