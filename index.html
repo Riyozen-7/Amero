@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amero — Premium Quality</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- Blood Aurora Background -->
+  <div class="aura-bg">
+    <div class="aura-layer-1"></div>
+    <div class="aura-layer-2"></div>
+    <div class="aura-layer-3"></div>
+    <div class="aura-layer-4"></div>
+    <div class="aura-layer-5"></div>
+    <div class="aura-layer-6"></div>
+  </div>
+
+  <div class="aura-content">
+
+  <!-- ========== HEADER / NAVBAR ========== -->
+  <header class="navbar" id="navbar">
+    <div class="container navbar-inner">
+      <a href="#home" class="logo">Amero</a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#products" class="nav-link">Products</a>
+        <a href="#cart" class="nav-link">Cart <span class="cart-count" id="navCartCount">0</span></a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section class="hero" id="home">
+    <div class="container hero-inner">
+      <div class="hero-content">
+        <p class="hero-badge">Crafted with Intention</p>
+        <h1 class="hero-title">Amero</h1>
+        <p class="hero-tagline">Timeless Quality, Modern Elegance</p>
+        <p class="hero-desc">Discover our curated collection of premium essentials designed to elevate everyday living.</p>
+        <a href="#products" class="btn btn-primary">Shop Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PRODUCTS SECTION ========== -->
+  <section class="section products-section" id="products">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Our Collection</p>
+        <h2 class="section-title">Featured Products</h2>
+      </div>
+      <div class="products-grid" id="productsGrid">
+        <!-- Products are injected by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CART SECTION ========== -->
+  <section class="section cart-section" id="cart">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Your Selections</p>
+        <h2 class="section-title">Shopping Cart</h2>
+      </div>
+
+      <div class="cart-layout">
+        <!-- Cart Items -->
+        <div class="cart-items-wrap">
+          <div id="cartEmpty" class="cart-empty">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <p>Your cart is empty</p>
+            <a href="#products" class="btn btn-secondary">Browse Products</a>
+          </div>
+          <div id="cartItems" class="cart-items"></div>
+        </div>
+
+        <!-- Billing Summary -->
+        <div class="billing-wrap">
+          <div class="billing-card">
+            <h3 class="billing-title">Order Summary</h3>
+            <div class="billing-row">
+              <span>Subtotal</span>
+              <span id="billingSubtotal">$0.00</span>
+            </div>
+            <div class="billing-row">
+              <span>Tax (8%)</span>
+              <span id="billingTax">$0.00</span>
+            </div>
+            <div class="billing-row">
+              <span>Shipping</span>
+              <span id="billingShipping">Free</span>
+            </div>
+            <div class="billing-divider"></div>
+            <div class="billing-row billing-total">
+              <span>Total</span>
+              <span id="billingTotal">$0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CHECKOUT / CONTACT SECTION ========== -->
+  <section class="section checkout-section" id="contact">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Get in Touch</p>
+        <h2 class="section-title">Checkout &amp; Contact</h2>
+      </div>
+
+      <div class="checkout-layout">
+        <form class="checkout-form" id="checkoutForm" novalidate>
+          <div class="form-group">
+            <label for="custName">Full Name <span class="required">*</span></label>
+            <input type="text" id="custName" name="custName" placeholder="Jane Doe" required />
+            <span class="form-error" id="errName">Please enter your name.</span>
+          </div>
+          <div class="form-group">
+            <label for="custEmail">Email Address <span class="required">*</span></label>
+            <input type="email" id="custEmail" name="custEmail" placeholder="jane@example.com" required />
+            <span class="form-error" id="errEmail">Please enter a valid email.</span>
+          </div>
+          <div class="form-group">
+            <label for="custAddress">Shipping Address <span class="required">*</span></label>
+            <input type="text" id="custAddress" name="custAddress" placeholder="123 Maple St, City, Country" required />
+            <span class="form-error" id="errAddress">Please enter your address.</span>
+          </div>
+          <div class="form-group">
+            <label for="custNotes">Order Notes</label>
+            <textarea id="custNotes" name="custNotes" rows="4" placeholder="Special instructions for your order..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Place Order</button>
+        </form>
+
+        <!-- Order Confirmation -->
+        <div class="order-confirmation" id="orderConfirmation">
+          <div class="confirmation-inner">
+            <i class="fa-solid fa-circle-check"></i>
+            <h3>Order Confirmed!</h3>
+            <p>Thank you, <strong id="confirmName"></strong>. Your order has been placed successfully.</p>
+            <p class="confirm-detail">A confirmation will be sent to <span id="confirmEmail"></span>.</p>
+            <button class="btn btn-secondary" onclick="resetCheckout()">Continue Shopping</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <h3 class="footer-logo">Amero</h3>
+        <p class="footer-tagline">Timeless Quality, Modern Elegance</p>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <ul>
+          <li><i class="fa-solid fa-envelope"></i> hello@amero.com</li>
+          <li><i class="fa-solid fa-phone"></i> +1 (555) 000-0000</li>
+          <li><i class="fa-solid fa-location-dot"></i> New York, NY</li>
+        </ul>
+      </div>
+      <div class="footer-social">
+        <h4>Follow Us</h4>
+        <div class="social-links">
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 Amero. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  </div><!-- /.aura-content -->
+
+  <script src="script.js"></script>
+</body>
+</html>
