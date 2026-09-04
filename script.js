@@ -19,9 +19,9 @@ const products = [
 
     // Add your product photos here
     images: [
-      'images/old1/front.jpg',
-      'images/old1/back.jpg',
-      'images/old1/side.jpg'
+      'images/old2/front.jpg',
+      'images/old2/back.jpg',
+      'images/old2/side.jpg'
     ],
 
     sizes: [
