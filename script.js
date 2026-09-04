@@ -15,7 +15,7 @@ const products = [
     desc: 'Chest 46 · Length 28 · Old-money striped seersucker weave. Quality 9.5/10.',
     price: 750,
     icon: 'fa-solid fa-shirt',
-    img: images/font.jpg.jpeg,
+    img: images/front1.jpg.jpeg,
     sizes: [
       { size: 'L/XXL', stock: 1 },
     ],
@@ -26,7 +26,7 @@ const products = [
     desc: '280 GSM · 100% premium feel puff-print tee.',
     price: 450,
     icon: 'fa-solid fa-shirt',
-    img: null,
+    img: images/front.jpg.jpeg,
     sizes: [
       { size: 'M', stock: 1 },
       { size: 'L', stock: 1 },
@@ -39,7 +39,7 @@ const products = [
     desc: '280 GSM · 100% premium feel puff-print tee.',
     price: 450,
     icon: 'fa-solid fa-shirt',
-    img: null,
+    img: images/font.jpg.jpeg,
     sizes: [
       { size: 'M', stock: 1 },
       { size: 'L', stock: 1 },
