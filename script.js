@@ -21,7 +21,7 @@ const products = [
     images: [
       'images/old2/front.jpg',
       'images/old2/back.jpg',
-      'images/old2/side.jpg'
+      'images/old2/close.jpg'
     ],
 
     sizes: [
@@ -39,7 +39,7 @@ const products = [
     images: [
       'images/tsh1/front.jpg',
       'images/tsh1/back.jpg',
-      'images/tsh1/side.jpg'
+      'images/tsh1/close.jpg'
     ],
 
     sizes: [
@@ -59,7 +59,7 @@ const products = [
     images: [
       'images/tsh2/front.jpg',
       'images/tsh2/back.jpg',
-      'images/tsh2/side.jpg'
+      'images/tsh2/close.jpg'
     ],
 
     sizes: [
@@ -79,7 +79,7 @@ const products = [
     images: [
       'images/product-4/front.jpg',
       'images/product-4/back.jpg',
-      'images/product-4/side.jpg'
+      'images/product-4/close.jpg'
     ],
 
     sizes: [
