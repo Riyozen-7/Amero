@@ -136,10 +136,10 @@
             <span class="form-error" id="errName">Please enter your name.</span>
           </div>
           <div class="form-group">
-            <label for="custEmail">Email Address <span class="required">*</span></label>
-            <input type="email" id="custEmail" name="custEmail" placeholder="jane@example.com" required />
-            <span class="form-error" id="errEmail">Please enter a valid email.</span>
-          </div>
+  <label for="custPhone">Phone Number <span class="required">*</span></label>
+  <input type="tel" id="custPhone" name="custPhone" placeholder="01XXXXXXXXX" required />
+  <span class="form-error" id="errPhone">Please enter a valid phone number.</span>
+</div>
           <div class="form-group">
             <label for="custAddress">Shipping Address <span class="required">*</span></label>
             <input type="text" id="custAddress" name="custAddress" placeholder="123 Maple St, City, Country" required />
@@ -158,7 +158,7 @@
             <i class="fa-solid fa-circle-check"></i>
             <h3>Order Confirmed!</h3>
             <p>Thank you, <strong id="confirmName"></strong>. Your order has been placed successfully.</p>
-            <p class="confirm-detail">A confirmation will be sent to <span id="confirmEmail"></span>.</p>
+            <p class="confirm-detail">Your order details have been prepared for WhatsApp.</p>
             <button class="btn btn-secondary" onclick="resetCheckout()">Continue Shopping</button>
           </div>
         </div>
