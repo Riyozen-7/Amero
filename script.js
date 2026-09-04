@@ -1,14 +1,9 @@
-```javascript
 /* ============================================
    AMERO — Premium Brand Website
-   JavaScript — Cart, Checkout, Product Gallery
+   JavaScript — Cart, Checkout, Interactions
    ============================================ */
 
-
-/* ============================================
-   PRODUCT DATA
-   ============================================ */
-
+// ---------- PRODUCT DATA ----------
 const products = [
   {
     id: 1,
@@ -17,7 +12,8 @@ const products = [
     price: 750,
     icon: 'fa-solid fa-shirt',
 
-    // Add your product photos here
+    img: 'images/product-1/front.jpg',
+
     images: [
       'images/product-1/front.jpg',
       'images/product-1/back.jpg',
@@ -35,6 +31,8 @@ const products = [
     desc: '280 GSM · 100% premium feel puff-print tee.',
     price: 450,
     icon: 'fa-solid fa-shirt',
+
+    img: 'images/product-2/front.jpg',
 
     images: [
       'images/product-2/front.jpg',
@@ -56,6 +54,8 @@ const products = [
     price: 450,
     icon: 'fa-solid fa-shirt',
 
+    img: 'images/product-3/front.jpg',
+
     images: [
       'images/product-3/front.jpg',
       'images/product-3/back.jpg',
@@ -76,6 +76,8 @@ const products = [
     price: 450,
     icon: 'fa-solid fa-shirt',
 
+    img: 'images/product-4/front.jpg',
+
     images: [
       'images/product-4/front.jpg',
       'images/product-4/back.jpg',
@@ -90,39 +92,16 @@ const products = [
   },
 ];
 
-
 const CURRENCY = '৳';
 
 
-/* ============================================
-   STATE
-   ============================================ */
-
+// ---------- STATE ----------
 let cart = [];
 
 const selectedSizes = {};
 
-let galleryProductId = null;
-let galleryImageIndex = 0;
 
-
-/* ============================================
-   HELPER — GET FIRST PRODUCT IMAGE
-   ============================================ */
-
-function getProductImage(product) {
-  if (product.images && product.images.length > 0) {
-    return product.images[0];
-  }
-
-  return null;
-}
-
-
-/* ============================================
-   STOCK
-   ============================================ */
-
+// ---------- STOCK ----------
 function stockRemaining(productId, size) {
   const product = products.find(p => p.id === productId);
 
@@ -140,10 +119,7 @@ function stockRemaining(productId, size) {
 }
 
 
-/* ============================================
-   DOM REFERENCES
-   ============================================ */
-
+// ---------- DOM REFERENCES ----------
 const productsGrid    = document.getElementById('productsGrid');
 const cartItemsEl     = document.getElementById('cartItems');
 const cartEmptyEl     = document.getElementById('cartEmpty');
@@ -158,225 +134,128 @@ const navLinks        = document.getElementById('navLinks');
 const navbar          = document.getElementById('navbar');
 
 
-/* ============================================
-   PRODUCT GALLERY STYLES
-   ============================================ */
+// ============================================
+// PRODUCT IMAGE GALLERY
+// ============================================
 
-const galleryStyles = document.createElement('style');
-
-galleryStyles.textContent = `
-  .product-img {
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-  }
-
-  .product-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.35s ease;
-  }
-
-  .product-img:hover img {
-    transform: scale(1.04);
-  }
-
-  .view-product-hint {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.75);
-    color: white;
-    padding: 7px 13px;
-    border-radius: 20px;
-    font-size: 12px;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-
-  .product-gallery-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.88);
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .product-gallery-modal.active {
-    display: flex;
-  }
-
-  .gallery-box {
-    width: min(900px, 95vw);
-    max-height: 95vh;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .gallery-main {
-    width: 100%;
-    height: min(70vh, 650px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .gallery-main img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    border-radius: 12px;
-  }
-
-  .gallery-close {
-    position: absolute;
-    top: -10px;
-    right: -5px;
-    width: 42px;
-    height: 42px;
-    border: none;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 2;
-  }
-
-  .gallery-close:hover {
-    background: rgba(255,255,255,0.28);
-  }
-
-  .gallery-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 45px;
-    height: 45px;
-    border: none;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    color: white;
-    font-size: 22px;
-    cursor: pointer;
-  }
-
-  .gallery-arrow:hover {
-    background: rgba(255,255,255,0.3);
-  }
-
-  .gallery-prev {
-    left: 10px;
-  }
-
-  .gallery-next {
-    right: 10px;
-  }
-
-  .gallery-thumbnails {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-    overflow-x: auto;
-    max-width: 100%;
-    padding: 5px;
-  }
-
-  .gallery-thumb {
-    width: 65px;
-    height: 65px;
-    flex-shrink: 0;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    overflow: hidden;
-    padding: 0;
-    background: transparent;
-    cursor: pointer;
-  }
-
-  .gallery-thumb.active {
-    border-color: white;
-  }
-
-  .gallery-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .gallery-title {
-    color: white;
-    font-size: 18px;
-    margin-top: 12px;
-    text-align: center;
-  }
-
-  @media (max-width: 600px) {
-    .gallery-main {
-      height: 65vh;
-    }
-
-    .gallery-arrow {
-      width: 40px;
-      height: 40px;
-    }
-
-    .gallery-prev {
-      left: 0;
-    }
-
-    .gallery-next {
-      right: 0;
-    }
-
-    .gallery-thumb {
-      width: 55px;
-      height: 55px;
-    }
-  }
-`;
-
-document.head.appendChild(galleryStyles);
+let galleryProductId = null;
+let galleryIndex = 0;
 
 
-/* ============================================
-   CREATE GALLERY MODAL
-   ============================================ */
-
+// ---------- CREATE GALLERY ----------
 const galleryModal = document.createElement('div');
 
-galleryModal.className = 'product-gallery-modal';
+galleryModal.id = 'productGalleryModal';
+
+galleryModal.style.cssText = `
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(0,0,0,0.9);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+`;
 
 galleryModal.innerHTML = `
-  <div class="gallery-box">
+  <div style="
+    position: relative;
+    width: min(900px, 95vw);
+    max-height: 95vh;
+    text-align: center;
+  ">
 
-    <button class="gallery-close" onclick="closeGallery()" aria-label="Close">
+    <button
+      id="galleryClose"
+      style="
+        position: absolute;
+        right: 0;
+        top: -45px;
+        width: 40px;
+        height: 40px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.15);
+        color: #fff;
+        font-size: 28px;
+        cursor: pointer;
+      "
+    >
       &times;
     </button>
 
-    <div class="gallery-main">
-      <button class="gallery-arrow gallery-prev" onclick="previousGalleryImage()" aria-label="Previous image">
-        &#10094;
-      </button>
+    <button
+      id="galleryPrev"
+      style="
+        position: absolute;
+        left: 5px;
+        top: 45%;
+        width: 45px;
+        height: 45px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.55);
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+      "
+    >
+      &#10094;
+    </button>
 
-      <img id="galleryMainImage" src="" alt="Product image">
+    <img
+      id="galleryMain"
+      src=""
+      alt=""
+      style="
+        max-width: 100%;
+        max-height: 72vh;
+        object-fit: contain;
+        border-radius: 12px;
+      "
+    >
 
-      <button class="gallery-arrow gallery-next" onclick="nextGalleryImage()" aria-label="Next image">
-        &#10095;
-      </button>
-    </div>
+    <button
+      id="galleryNext"
+      style="
+        position: absolute;
+        right: 5px;
+        top: 45%;
+        width: 45px;
+        height: 45px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.55);
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+      "
+    >
+      &#10095;
+    </button>
 
-    <div class="gallery-thumbnails" id="galleryThumbnails"></div>
+    <div
+      id="galleryThumbs"
+      style="
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        overflow-x: auto;
+        margin-top: 12px;
+        padding: 4px;
+      "
+    ></div>
 
-    <div class="gallery-title" id="galleryTitle"></div>
+    <div
+      id="galleryName"
+      style="
+        color: #fff;
+        margin-top: 10px;
+        font-size: 16px;
+      "
+    ></div>
 
   </div>
 `;
@@ -384,315 +263,495 @@ galleryModal.innerHTML = `
 document.body.appendChild(galleryModal);
 
 
-/* ============================================
-   OPEN PRODUCT GALLERY
-   ============================================ */
+// ============================================
+// UPDATE GALLERY
+// ============================================
 
-function openGallery(productId) {
-  const product = products.find(p => p.id === productId);
+function updateGallery() {
 
-  if (!product || !product.images || product.images.length === 0) {
+  const product =
+    products.find(p => p.id === galleryProductId);
+
+  if (
+    !product ||
+    !product.images ||
+    product.images.length === 0
+  ) {
     return;
   }
 
-  galleryProductId = productId;
-  galleryImageIndex = 0;
+  const main =
+    document.getElementById('galleryMain');
+
+  const thumbs =
+    document.getElementById('galleryThumbs');
+
+  const name =
+    document.getElementById('galleryName');
+
+
+  main.src =
+    product.images[galleryIndex];
+
+  main.alt =
+    product.name;
+
+  name.textContent =
+    product.name;
+
+
+  thumbs.innerHTML =
+    product.images.map((src, i) => `
+
+      <button
+        onclick="selectGalleryImage(${i})"
+        style="
+          width:60px;
+          height:60px;
+          padding:0;
+          border:2px solid ${i === galleryIndex ? '#fff' : 'transparent'};
+          background:none;
+          border-radius:7px;
+          overflow:hidden;
+          cursor:pointer;
+          flex:none;
+        "
+      >
+
+        <img
+          src="${src}"
+          alt=""
+          style="
+            width:100%;
+            height:100%;
+            object-fit:cover;
+          "
+        >
+
+      </button>
+
+    `).join('');
+}
+
+
+// ============================================
+// OPEN GALLERY
+// ============================================
+
+function openGallery(productId) {
+
+  const product =
+    products.find(p => p.id === productId);
+
+  if (
+    !product ||
+    !product.images ||
+    !product.images.length
+  ) {
+    return;
+  }
+
+  galleryProductId =
+    productId;
+
+  galleryIndex =
+    0;
 
   updateGallery();
 
-  galleryModal.classList.add('active');
+  galleryModal.style.display =
+    'flex';
 
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow =
+    'hidden';
 }
 
 
-/* ============================================
-   UPDATE GALLERY
-   ============================================ */
+// ============================================
+// CLOSE GALLERY
+// ============================================
 
-function updateGallery() {
-  const product = products.find(p => p.id === galleryProductId);
+function closeGallery() {
 
-  if (!product || !product.images || product.images.length === 0) {
-    return;
-  }
+  galleryModal.style.display =
+    'none';
 
-  const mainImage = document.getElementById('galleryMainImage');
-  const thumbnails = document.getElementById('galleryThumbnails');
-  const title = document.getElementById('galleryTitle');
-
-  mainImage.src = product.images[galleryImageIndex];
-  mainImage.alt = product.name;
-
-  title.textContent = product.name;
-
-  thumbnails.innerHTML = product.images.map((image, index) => `
-    <button
-      class="gallery-thumb ${index === galleryImageIndex ? 'active' : ''}"
-      onclick="selectGalleryImage(${index})"
-      aria-label="View image ${index + 1}"
-    >
-      <img src="${image}" alt="${product.name} image ${index + 1}">
-    </button>
-  `).join('');
+  document.body.style.overflow =
+    '';
 }
 
 
-/* ============================================
-   SELECT GALLERY IMAGE
-   ============================================ */
+// ============================================
+// SELECT GALLERY IMAGE
+// ============================================
 
 function selectGalleryImage(index) {
-  const product = products.find(p => p.id === galleryProductId);
+
+  const product =
+    products.find(p => p.id === galleryProductId);
 
   if (!product) return;
 
-  if (index < 0 || index >= product.images.length) return;
+  if (
+    index < 0 ||
+    index >= product.images.length
+  ) {
+    return;
+  }
 
-  galleryImageIndex = index;
+  galleryIndex =
+    index;
 
   updateGallery();
 }
 
 
-/* ============================================
-   NEXT IMAGE
-   ============================================ */
+// ============================================
+// NEXT IMAGE
+// ============================================
 
 function nextGalleryImage() {
-  const product = products.find(p => p.id === galleryProductId);
 
-  if (!product || !product.images.length) return;
+  const product =
+    products.find(p => p.id === galleryProductId);
 
-  galleryImageIndex =
-    (galleryImageIndex + 1) % product.images.length;
+  if (
+    !product ||
+    !product.images.length
+  ) {
+    return;
+  }
 
-  updateGallery();
-}
-
-
-/* ============================================
-   PREVIOUS IMAGE
-   ============================================ */
-
-function previousGalleryImage() {
-  const product = products.find(p => p.id === galleryProductId);
-
-  if (!product || !product.images.length) return;
-
-  galleryImageIndex =
-    (galleryImageIndex - 1 + product.images.length) %
+  galleryIndex =
+    (galleryIndex + 1) %
     product.images.length;
 
   updateGallery();
 }
 
 
-/* ============================================
-   CLOSE GALLERY
-   ============================================ */
+// ============================================
+// PREVIOUS IMAGE
+// ============================================
 
-function closeGallery() {
-  galleryModal.classList.remove('active');
+function previousGalleryImage() {
 
-  document.body.style.overflow = '';
+  const product =
+    products.find(p => p.id === galleryProductId);
 
-  galleryProductId = null;
-  galleryImageIndex = 0;
+  if (
+    !product ||
+    !product.images.length
+  ) {
+    return;
+  }
+
+  galleryIndex =
+    (galleryIndex - 1 + product.images.length) %
+    product.images.length;
+
+  updateGallery();
 }
 
 
-/* ============================================
-   CLOSE GALLERY WHEN CLICKING BACKGROUND
-   ============================================ */
+// ============================================
+// GALLERY BUTTONS
+// ============================================
 
-galleryModal.addEventListener('click', function(e) {
-  if (e.target === galleryModal) {
-    closeGallery();
+document
+  .getElementById('galleryClose')
+  .addEventListener(
+    'click',
+    closeGallery
+  );
+
+document
+  .getElementById('galleryNext')
+  .addEventListener(
+    'click',
+    nextGalleryImage
+  );
+
+document
+  .getElementById('galleryPrev')
+  .addEventListener(
+    'click',
+    previousGalleryImage
+  );
+
+
+// ============================================
+// CLICK OUTSIDE GALLERY
+// ============================================
+
+galleryModal.addEventListener(
+  'click',
+  function(e) {
+
+    if (e.target === galleryModal) {
+      closeGallery();
+    }
+
   }
-});
+);
 
 
-/* ============================================
-   KEYBOARD CONTROLS FOR GALLERY
-   ============================================ */
+// ============================================
+// KEYBOARD CONTROLS
+// ============================================
 
-document.addEventListener('keydown', function(e) {
-  if (!galleryModal.classList.contains('active')) return;
+document.addEventListener(
+  'keydown',
+  function(e) {
 
-  if (e.key === 'Escape') {
-    closeGallery();
+    if (
+      galleryModal.style.display !== 'flex'
+    ) {
+      return;
+    }
+
+    if (e.key === 'Escape') {
+      closeGallery();
+    }
+
+    if (e.key === 'ArrowRight') {
+      nextGalleryImage();
+    }
+
+    if (e.key === 'ArrowLeft') {
+      previousGalleryImage();
+    }
+
   }
-
-  if (e.key === 'ArrowRight') {
-    nextGalleryImage();
-  }
-
-  if (e.key === 'ArrowLeft') {
-    previousGalleryImage();
-  }
-});
+);
 
 
-/* ============================================
-   RENDER PRODUCTS
-   ============================================ */
+// ============================================
+// RENDER PRODUCTS
+// ============================================
 
 function renderProducts() {
 
-  productsGrid.innerHTML = products.map(p => {
+  productsGrid.innerHTML =
+    products.map(p => {
 
-    if (!selectedSizes[p.id]) {
+      // Select first available size
+      if (!selectedSizes[p.id]) {
 
-      const firstAvailable =
-        p.sizes.find(
-          s => stockRemaining(p.id, s.size) > 0
+        const firstAvailable =
+          p.sizes.find(
+            s =>
+              stockRemaining(
+                p.id,
+                s.size
+              ) > 0
+          );
+
+        selectedSizes[p.id] =
+          firstAvailable
+            ? firstAvailable.size
+            : p.sizes[0].size;
+      }
+
+
+      // ---------- SIZE CHIPS ----------
+
+      const chips =
+        p.sizes.map(s => {
+
+          const remaining =
+            stockRemaining(
+              p.id,
+              s.size
+            );
+
+          const isSelected =
+            selectedSizes[p.id] === s.size;
+
+
+          return `
+            <button
+              class="size-chip${isSelected ? ' selected' : ''}"
+              onclick="selectSize(${p.id}, '${s.size}')"
+              ${remaining <= 0 ? 'disabled' : ''}
+            >
+              ${s.size}
+            </button>
+          `;
+
+        }).join('');
+
+
+      // ---------- STOCK ----------
+
+      const anyStockLeft =
+        p.sizes.some(
+          s =>
+            stockRemaining(
+              p.id,
+              s.size
+            ) > 0
         );
 
-      selectedSizes[p.id] =
-        firstAvailable
-          ? firstAvailable.size
-          : p.sizes[0].size;
-    }
+
+      // ---------- IMAGE ----------
+
+      const media =
+        p.img
+
+          ? `
+            <img
+              src="${p.img}"
+              alt="${p.name}"
+              loading="lazy"
+            >
+          `
+
+          : `
+            <i class="${p.icon}"></i>
+          `;
 
 
-    /* ---------- SIZE CHIPS ---------- */
+      // ---------- IMAGE COUNT ----------
 
-    const chips = p.sizes.map(s => {
+      const imageCount =
+        p.images
+          ? p.images.length
+          : 0;
 
-      const remaining =
-        stockRemaining(p.id, s.size);
 
-      const isSelected =
-        selectedSizes[p.id] === s.size;
+      // ---------- PRODUCT CARD ----------
 
       return `
-        <button
-          class="size-chip${isSelected ? ' selected' : ''}"
-          onclick="selectSize(${p.id}, '${s.size}')"
-          ${remaining <= 0 ? 'disabled' : ''}
+
+        <div
+          class="product-card"
+          data-id="${p.id}"
         >
-          ${s.size}
-        </button>
+
+          <div
+            class="product-img"
+            ${
+              imageCount
+                ? `
+                  onclick="openGallery(${p.id})"
+                  style="cursor:pointer;"
+                `
+                : ''
+            }
+          >
+
+            ${media}
+
+            ${
+              imageCount > 1
+
+                ? `
+                  <span
+                    style="
+                      position:absolute;
+                      left:50%;
+                      bottom:10px;
+                      transform:translateX(-50%);
+                      background:rgba(0,0,0,.7);
+                      color:#fff;
+                      padding:6px 10px;
+                      border-radius:20px;
+                      font-size:12px;
+                      white-space:nowrap;
+                    "
+                  >
+                    View ${imageCount} photos
+                  </span>
+                `
+
+                : ''
+            }
+
+          </div>
+
+
+          <div class="product-info">
+
+            <span class="stock-badge">
+              Only 1 piece per size
+            </span>
+
+
+            <h3 class="product-name">
+              ${p.name}
+            </h3>
+
+
+            <p class="product-desc">
+              ${p.desc}
+            </p>
+
+
+            <span class="size-label">
+              Size
+            </span>
+
+
+            <div class="size-chips">
+              ${chips}
+            </div>
+
+
+            <div class="product-bottom">
+
+              <span class="product-price">
+                ${CURRENCY}${p.price.toFixed(0)}
+              </span>
+
+
+              <button
+                class="btn btn-primary btn-sm"
+                onclick="addToCart(${p.id})"
+                ${anyStockLeft ? '' : 'disabled'}
+              >
+                ${
+                  anyStockLeft
+                    ? 'Add to Cart'
+                    : 'Sold Out'
+                }
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
       `;
 
     }).join('');
-
-
-    /* ---------- STOCK ---------- */
-
-    const anyStockLeft =
-      p.sizes.some(
-        s => stockRemaining(p.id, s.size) > 0
-      );
-
-
-    /* ---------- PRODUCT IMAGE ---------- */
-
-    const firstImage = getProductImage(p);
-
-    const media = firstImage
-      ? `
-        <img
-          src="${firstImage}"
-          alt="${p.name}"
-          loading="lazy"
-        >
-
-        ${
-          p.images.length > 1
-            ? `<span class="view-product-hint">
-                 View ${p.images.length} photos
-               </span>`
-            : ''
-        }
-      `
-      : `<i class="${p.icon}"></i>`;
-
-
-    /* ---------- PRODUCT CARD ---------- */
-
-    return `
-      <div class="product-card" data-id="${p.id}">
-
-        <div
-          class="product-img"
-          onclick="openGallery(${p.id})"
-          role="button"
-          tabindex="0"
-          aria-label="View ${p.name}"
-          onkeydown="if(event.key === 'Enter') openGallery(${p.id})"
-        >
-          ${media}
-        </div>
-
-        <div class="product-info">
-
-          <span class="stock-badge">
-            Only 1 piece per size
-          </span>
-
-          <h3 class="product-name">
-            ${p.name}
-          </h3>
-
-          <p class="product-desc">
-            ${p.desc}
-          </p>
-
-          <span class="size-label">
-            Size
-          </span>
-
-          <div class="size-chips">
-            ${chips}
-          </div>
-
-          <div class="product-bottom">
-
-            <span class="product-price">
-              ${CURRENCY}${p.price.toFixed(0)}
-            </span>
-
-            <button
-              class="btn btn-primary btn-sm"
-              onclick="addToCart(${p.id})"
-              ${anyStockLeft ? '' : 'disabled'}
-            >
-              ${anyStockLeft ? 'Add to Cart' : 'Sold Out'}
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-    `;
-
-  }).join('');
 }
 
 
-/* ============================================
-   SELECT SIZE
-   ============================================ */
+// ============================================
+// SELECT SIZE
+// ============================================
 
 function selectSize(productId, size) {
 
-  selectedSizes[productId] = size;
+  selectedSizes[productId] =
+    size;
 
   renderProducts();
 }
 
 
-/* ============================================
-   ADD TO CART
-   ============================================ */
+// ============================================
+// ADD TO CART
+// ============================================
 
 function addToCart(productId) {
 
   const product =
-    products.find(p => p.id === productId);
+    products.find(
+      p => p.id === productId
+    );
 
   if (!product) return;
 
@@ -700,10 +759,13 @@ function addToCart(productId) {
   const size =
     selectedSizes[productId];
 
-  if (!size) return;
 
-
-  if (stockRemaining(productId, size) <= 0) {
+  if (
+    stockRemaining(
+      productId,
+      size
+    ) <= 0
+  ) {
     return;
   }
 
@@ -726,7 +788,7 @@ function addToCart(productId) {
 
       id: product.id,
 
-      size,
+      size: size,
 
       name: product.name,
 
@@ -736,8 +798,7 @@ function addToCart(productId) {
 
       icon: product.icon,
 
-      // Cart uses the first product image
-      img: getProductImage(product),
+      img: product.img,
 
       qty: 1
 
@@ -751,7 +812,7 @@ function addToCart(productId) {
   renderProducts();
 
 
-  /* Scroll to cart */
+  // Scroll to cart
 
   document
     .getElementById('cart')
@@ -761,19 +822,23 @@ function addToCart(productId) {
 }
 
 
-/* ============================================
-   REMOVE FROM CART
-   ============================================ */
+// ============================================
+// REMOVE FROM CART
+// ============================================
 
-function removeFromCart(productId, size) {
+function removeFromCart(
+  productId,
+  size
+) {
 
-  cart = cart.filter(
-    item =>
-      !(
-        item.id === productId &&
-        item.size === size
-      )
-  );
+  cart =
+    cart.filter(
+      item =>
+        !(
+          item.id === productId &&
+          item.size === size
+        )
+    );
 
   updateCart();
 
@@ -781,11 +846,15 @@ function removeFromCart(productId, size) {
 }
 
 
-/* ============================================
-   CHANGE QUANTITY
-   ============================================ */
+// ============================================
+// CHANGE QUANTITY
+// ============================================
 
-function changeQty(productId, size, delta) {
+function changeQty(
+  productId,
+  size,
+  delta
+) {
 
   const item =
     cart.find(
@@ -799,7 +868,10 @@ function changeQty(productId, size, delta) {
 
   if (
     delta > 0 &&
-    stockRemaining(productId, size) <= 0
+    stockRemaining(
+      productId,
+      size
+    ) <= 0
   ) {
     return;
   }
@@ -810,7 +882,10 @@ function changeQty(productId, size, delta) {
 
   if (item.qty <= 0) {
 
-    removeFromCart(productId, size);
+    removeFromCart(
+      productId,
+      size
+    );
 
     return;
   }
@@ -822,15 +897,16 @@ function changeQty(productId, size, delta) {
 }
 
 
-/* ============================================
-   UPDATE CART UI
-   ============================================ */
+// ============================================
+// UPDATE CART
+// ============================================
 
 function updateCart() {
 
   const totalItems =
     cart.reduce(
-      (sum, item) => sum + item.qty,
+      (sum, item) =>
+        sum + item.qty,
       0
     );
 
@@ -839,43 +915,52 @@ function updateCart() {
     totalItems;
 
 
-  /* ---------- EMPTY CART ---------- */
+  // ---------- EMPTY CART ----------
 
   if (cart.length === 0) {
 
-    cartEmptyEl.classList.add('visible');
+    cartEmptyEl.classList.add(
+      'visible'
+    );
 
-    cartItemsEl.style.display = 'none';
+    cartItemsEl.style.display =
+      'none';
 
   } else {
 
-    cartEmptyEl.classList.remove('visible');
+    cartEmptyEl.classList.remove(
+      'visible'
+    );
 
-    cartItemsEl.style.display = 'flex';
+    cartItemsEl.style.display =
+      'flex';
   }
 
 
-  /* ---------- CART ITEMS ---------- */
+  // ---------- CART ITEMS ----------
 
   cartItemsEl.innerHTML =
     cart.map(item => {
 
-      const media = item.img
+      const media =
+        item.img
 
-        ? `
-          <img
-            src="${item.img}"
-            alt="${item.name}"
-            style="
-              width:100%;
-              height:100%;
-              object-fit:cover;
-              border-radius:inherit;
-            "
-          >
-        `
+          ? `
+            <img
+              src="${item.img}"
+              alt="${item.name}"
+              style="
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                border-radius:inherit;
+              "
+            >
+          `
 
-        : `<i class="${item.icon}"></i>`;
+          : `
+            <i class="${item.icon}"></i>
+          `;
 
 
       const canIncrease =
@@ -904,13 +989,17 @@ function updateCart() {
               ${item.name} — Size ${item.size}
             </div>
 
+
             <div class="cart-item-price">
               ${CURRENCY}${item.price.toFixed(0)} each
             </div>
 
+
             <div class="cart-item-subtotal">
               Subtotal:
-              ${CURRENCY}${(item.price * item.qty).toFixed(0)}
+              ${CURRENCY}${(
+                item.price * item.qty
+              ).toFixed(0)}
             </div>
 
           </div>
@@ -959,57 +1048,75 @@ function updateCart() {
     }).join('');
 
 
-  /* ---------- BILLING ---------- */
+  // ---------- BILLING ----------
 
   updateBilling();
 }
 
 
-/* ============================================
-   UPDATE BILLING
-   ============================================ */
+// ============================================
+// UPDATE BILLING
+// ============================================
 
 function updateBilling() {
 
   const subtotal =
     cart.reduce(
       (sum, item) =>
-        sum + item.price * item.qty,
+        sum +
+        item.price *
+        item.qty,
       0
     );
 
 
-  const taxRate = 0.08;
+  const taxRate =
+    0.08;
+
 
   const tax =
-    subtotal * taxRate;
+    subtotal *
+    taxRate;
+
 
   const shipping =
-    subtotal > 0 ? 0 : 0;
+    subtotal > 0
+      ? 0
+      : 0;
+
 
   const total =
-    subtotal + tax + shipping;
+    subtotal +
+    tax +
+    shipping;
 
 
   billingSubtotal.textContent =
     `${CURRENCY}${subtotal.toFixed(0)}`;
 
-  billingTax.textContent =
-    `${CURRENCY}${tax.toFixed(0)}`;
+
+  if (billingTax) {
+
+    billingTax.textContent =
+      `${CURRENCY}${tax.toFixed(0)}`;
+
+  }
+
 
   billingShipping.textContent =
     subtotal > 0
       ? 'Free'
       : `${CURRENCY}0`;
 
+
   billingTotal.textContent =
     `${CURRENCY}${total.toFixed(0)}`;
 }
 
 
-/* ============================================
-   CHECKOUT FORM
-   ============================================ */
+// ============================================
+// CHECKOUT FORM
+// ============================================
 
 checkoutForm.addEventListener(
   'submit',
@@ -1018,44 +1125,60 @@ checkoutForm.addEventListener(
     e.preventDefault();
 
 
-    /* ---------- VALIDATION ---------- */
+    // ---------- VALIDATION ----------
 
     const name =
-      document.getElementById('custName');
+      document.getElementById(
+        'custName'
+      );
 
     const email =
-      document.getElementById('custEmail');
+      document.getElementById(
+        'custEmail'
+      );
 
     const address =
-      document.getElementById('custAddress');
+      document.getElementById(
+        'custAddress'
+      );
 
 
     let valid = true;
 
 
-    /* ---------- NAME ---------- */
+    // ---------- NAME ----------
 
-    if (name.value.trim() === '') {
+    if (
+      name.value.trim() === ''
+    ) {
 
-      name.classList.add('error');
+      name.classList.add(
+        'error'
+      );
 
       document
         .getElementById('errName')
-        .classList.add('visible');
+        .classList.add(
+          'visible'
+        );
 
       valid = false;
 
     } else {
 
-      name.classList.remove('error');
+      name.classList.remove(
+        'error'
+      );
 
       document
         .getElementById('errName')
-        .classList.remove('visible');
+        .classList.remove(
+          'visible'
+        );
     }
 
 
-    /* ---------- EMAIL ---------- */
+    // ---------- EMAIL ----------
 
     const emailPattern =
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1067,59 +1190,81 @@ checkoutForm.addEventListener(
       )
     ) {
 
-      email.classList.add('error');
+      email.classList.add(
+        'error'
+      );
 
       document
         .getElementById('errEmail')
-        .classList.add('visible');
+        .classList.add(
+          'visible'
+        );
 
       valid = false;
 
     } else {
 
-      email.classList.remove('error');
+      email.classList.remove(
+        'error'
+      );
 
       document
         .getElementById('errEmail')
-        .classList.remove('visible');
+        .classList.remove(
+          'visible'
+        );
     }
 
 
-    /* ---------- ADDRESS ---------- */
+    // ---------- ADDRESS ----------
 
-    if (address.value.trim() === '') {
+    if (
+      address.value.trim() === ''
+    ) {
 
-      address.classList.add('error');
+      address.classList.add(
+        'error'
+      );
 
       document
         .getElementById('errAddress')
-        .classList.add('visible');
+        .classList.add(
+          'visible'
+        );
 
       valid = false;
 
     } else {
 
-      address.classList.remove('error');
+      address.classList.remove(
+        'error'
+      );
 
       document
         .getElementById('errAddress')
-        .classList.remove('visible');
+        .classList.remove(
+          'visible'
+        );
     }
 
 
     if (!valid) return;
 
 
-    /* ---------- SHOW CONFIRMATION ---------- */
+    // ---------- CONFIRMATION ----------
 
     document
-      .getElementById('confirmName')
+      .getElementById(
+        'confirmName'
+      )
       .textContent =
       name.value.trim();
 
 
     document
-      .getElementById('confirmEmail')
+      .getElementById(
+        'confirmEmail'
+      )
       .textContent =
       email.value.trim();
 
@@ -1129,22 +1274,27 @@ checkoutForm.addEventListener(
 
 
     document
-      .getElementById('orderConfirmation')
-      .classList.add('visible');
+      .getElementById(
+        'orderConfirmation'
+      )
+      .classList.add(
+        'visible'
+      );
 
 
-    /* ---------- RESET CART ---------- */
+    // ---------- RESET CART ----------
 
     cart = [];
 
     updateCart();
+
   }
 );
 
 
-/* ============================================
-   RESET CHECKOUT
-   ============================================ */
+// ============================================
+// RESET CHECKOUT
+// ============================================
 
 function resetCheckout() {
 
@@ -1155,36 +1305,47 @@ function resetCheckout() {
 
 
   document
-    .getElementById('orderConfirmation')
-    .classList.remove('visible');
+    .getElementById(
+      'orderConfirmation'
+    )
+    .classList.remove(
+      'visible'
+    );
 
 
   document
-    .getElementById('products')
+    .getElementById(
+      'products'
+    )
     .scrollIntoView({
       behavior: 'smooth'
     });
 }
 
 
-/* ============================================
-   MOBILE MENU
-   ============================================ */
+// ============================================
+// MOBILE MENU
+// ============================================
 
 menuToggle.addEventListener(
   'click',
   function() {
 
-    this.classList.toggle('active');
+    this.classList.toggle(
+      'active'
+    );
 
-    navLinks.classList.toggle('open');
+    navLinks.classList.toggle(
+      'open'
+    );
+
   }
 );
 
 
-/* ============================================
-   CLOSE MOBILE MENU ON LINK CLICK
-   ============================================ */
+// ============================================
+// CLOSE MOBILE MENU
+// ============================================
 
 document
   .querySelectorAll('.nav-link')
@@ -1194,42 +1355,56 @@ document
       'click',
       function() {
 
-        menuToggle.classList.remove('active');
+        menuToggle.classList.remove(
+          'active'
+        );
 
-        navLinks.classList.remove('open');
+        navLinks.classList.remove(
+          'open'
+        );
+
       }
     );
 
   });
 
 
-/* ============================================
-   NAVBAR SCROLL EFFECT
-   ============================================ */
+// ============================================
+// NAVBAR SCROLL EFFECT
+// ============================================
 
 window.addEventListener(
   'scroll',
   function() {
 
-    if (window.scrollY > 20) {
+    if (
+      window.scrollY > 20
+    ) {
 
-      navbar.classList.add('scrolled');
+      navbar.classList.add(
+        'scrolled'
+      );
 
     } else {
 
-      navbar.classList.remove('scrolled');
+      navbar.classList.remove(
+        'scrolled'
+      );
+
     }
 
   }
 );
 
 
-/* ============================================
-   ACTIVE NAV LINK ON SCROLL
-   ============================================ */
+// ============================================
+// ACTIVE NAV LINK
+// ============================================
 
 const sections =
-  document.querySelectorAll('section[id]');
+  document.querySelectorAll(
+    'section[id]'
+  );
 
 
 function setActiveNav() {
@@ -1238,44 +1413,56 @@ function setActiveNav() {
     window.scrollY + 100;
 
 
-  sections.forEach(section => {
+  sections.forEach(
+    section => {
 
-    const top =
-      section.offsetTop;
+      const top =
+        section.offsetTop;
 
-    const height =
-      section.offsetHeight;
+      const height =
+        section.offsetHeight;
 
-    const id =
-      section.getAttribute('id');
-
-
-    const link =
-      document.querySelector(
-        `.nav-link[href="#${id}"]`
-      );
+      const id =
+        section.getAttribute(
+          'id'
+        );
 
 
-    if (link) {
+      const link =
+        document.querySelector(
+          `.nav-link[href="#${id}"]`
+        );
 
-      if (
-        scrollY >= top &&
-        scrollY < top + height
-      ) {
 
-        document
-          .querySelectorAll('.nav-link')
-          .forEach(
-            l => l.classList.remove('active')
+      if (link) {
+
+        if (
+          scrollY >= top &&
+          scrollY < top + height
+        ) {
+
+          document
+            .querySelectorAll(
+              '.nav-link'
+            )
+            .forEach(
+              l =>
+                l.classList.remove(
+                  'active'
+                )
+            );
+
+
+          link.classList.add(
+            'active'
           );
 
+        }
 
-        link.classList.add('active');
       }
 
     }
-
-  });
+  );
 }
 
 
@@ -1285,11 +1472,10 @@ window.addEventListener(
 );
 
 
-/* ============================================
-   INIT
-   ============================================ */
+// ============================================
+// INIT
+// ============================================
 
 renderProducts();
 
 updateCart();
-```
