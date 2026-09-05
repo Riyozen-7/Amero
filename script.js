@@ -96,6 +96,30 @@ const PAYMENT_LABELS = {
   nagad: 'Nagad',
 };
 
+// Telegram order notifications — sends you a message the instant
+// someone checks out. Note: since this is a public static site, the
+// bot token below is technically visible to anyone who views the
+// source. Worst case is someone spamming your bot chat; they can't
+// access anything else of yours.
+const TELEGRAM_BOT_TOKEN = '8892072526:AAE-BrLlQT8Dq0OucJKFIFcNiGTmNhGLhm4';
+const TELEGRAM_CHAT_ID = '8623285080';
+
+function sendTelegramNotification(message) {
+  fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: TELEGRAM_CHAT_ID,
+      text: message,
+      parse_mode: 'HTML',
+    }),
+  }).catch(err => {
+    // Fail silently for the customer — the order confirmation still
+    // shows either way. Log it so you can debug from the browser console.
+    console.error('Telegram notification failed:', err);
+  });
+}
+
 // ---------- STATE ----------
 let cart = [];
 const selectedSizes = {};
@@ -505,9 +529,40 @@ checkoutForm.addEventListener('submit', function (e) {
     return;
   }
 
-  // Show a plain thank-you confirmation — no WhatsApp redirect.
-  // You'll need to check in with the customer manually using the
-  // name, phone, address, and payment method they entered above.
+  // Build and send the order notification to Telegram
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const deliveryFee = DELIVERY_FEES[deliveryArea.value] || 0;
+  const total = subtotal + deliveryFee;
+  const deliveryAreaLabel = deliveryArea.value === 'chittagong' ? 'Inside Chittagong' : 'Outside Chittagong';
+
+  const itemLines = cart.map((item, i) =>
+    `${i + 1}. ${item.name} — Size ${item.size} × ${item.qty} = ${CURRENCY}${(item.price * item.qty).toFixed(0)}`
+  ).join('\n');
+
+  const notesEl = document.getElementById('custNotes');
+  const notesLine = notesEl && notesEl.value.trim() ? `\n📝 Notes: ${notesEl.value.trim()}` : '';
+  const paymentLine = (paymentMethod === 'bkash' || paymentMethod === 'nagad')
+    ? `${PAYMENT_LABELS[paymentMethod]} (Txn ID: ${txnId.value.trim()})`
+    : PAYMENT_LABELS[paymentMethod];
+
+  const message =
+`🛍️ <b>NEW AMERO ORDER</b>
+
+👤 ${name.value.trim()}
+📞 ${cleanPhone}
+📍 ${address.value.trim()}
+🚚 ${deliveryAreaLabel} (${CURRENCY}${deliveryFee})
+
+🛒 Items:
+${itemLines}
+
+💰 Subtotal: ${CURRENCY}${subtotal.toFixed(0)}
+💰 Total: ${CURRENCY}${total.toFixed(0)}
+💳 Payment: ${paymentLine}${notesLine}`;
+
+  sendTelegramNotification(message);
+
+  // Show a plain thank-you confirmation to the customer.
   document.getElementById('confirmName').textContent = name.value.trim();
   document.getElementById('confirmPhone').textContent = cleanPhone;
 
