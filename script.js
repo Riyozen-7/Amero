@@ -63,11 +63,11 @@ const products = [
     desc: '280 GSM · 100% premium feel puff-print tee, Spider-Man design.',
     price: 450,
     icon: 'fa-solid fa-shirt',
-    img: 'images/product-4/front.jpg',
+    img: 'images/product-4/front.jpg.jpeg',
     images: [
-      'images/product-4/front.jpg',
-      'images/product-4/back.jpg',
-      'images/product-4/side.jpg'
+      'images/product-4/front.jpg.jpeg',
+      'images/product-4/back.jpg.jpeg',
+      'images/product-4/side.jpg.jpeg'
     ],
     sizes: [
       { size: 'M', stock: 1 },
