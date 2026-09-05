@@ -2,7 +2,7 @@
    AMERO — Premium Brand Website
    JavaScript — Cart, Checkout, Interactions
    ============================================ */
- 
+
 // ---------- PRODUCT DATA ----------
 const products = [
   {
@@ -76,9 +76,9 @@ const products = [
     ],
   },
 ];
- 
+
 const CURRENCY = '৳';
- 
+
 // Delivery fees by area — used for the cart's displayed total.
 // Matches the options in the checkout form's "Delivery Area" select.
 const DELIVERY_FEES = {
@@ -86,27 +86,36 @@ const DELIVERY_FEES = {
   chittagong: 70,
   outside: 120,
 };
- 
+
+// Manual payment methods — customer sends money to this number and
+// enters the Transaction ID for you to verify against your bKash/Nagad app.
+const PAYMENT_NUMBER = '01880471287';
+const PAYMENT_LABELS = {
+  cod: 'Cash on Delivery',
+  bkash: 'bKash',
+  nagad: 'Nagad',
+};
+
 // ---------- STATE ----------
 let cart = [];
 const selectedSizes = {};
 let selectedDeliveryArea = ''; // kept in sync with the checkout form's select
- 
+
 // ---------- STOCK ----------
 function stockRemaining(productId, size) {
   const product = products.find(p => p.id === productId);
   if (!product) return 0;
- 
+
   const sizeInfo = product.sizes.find(s => s.size === size);
   if (!sizeInfo) return 0;
- 
+
   const inCart = cart
     .filter(item => item.id === productId && item.size === size)
     .reduce((sum, item) => sum + item.qty, 0);
- 
+
   return sizeInfo.stock - inCart;
 }
- 
+
 // ---------- DOM REFERENCES ----------
 const productsGrid    = document.getElementById('productsGrid');
 const cartItemsEl     = document.getElementById('cartItems');
@@ -119,14 +128,14 @@ const checkoutForm    = document.getElementById('checkoutForm');
 const menuToggle      = document.getElementById('menuToggle');
 const navLinks        = document.getElementById('navLinks');
 const navbar          = document.getElementById('navbar');
- 
+
 // ============================================
 // PRODUCT IMAGE GALLERY
 // ============================================
- 
+
 let galleryProductId = null;
 let galleryIndex = 0;
- 
+
 const galleryModal = document.createElement('div');
 galleryModal.id = 'productGalleryModal';
 galleryModal.style.cssText = `
@@ -140,7 +149,7 @@ galleryModal.style.cssText = `
   padding: 20px;
   box-sizing: border-box;
 `;
- 
+
 galleryModal.innerHTML = `
   <div style="position: relative; width: min(900px, 95vw); max-height: 95vh; text-align: center;">
     <button id="galleryClose" style="position: absolute; right: 0; top: -45px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255,255,255,0.15); color: #fff; font-size: 28px; cursor: pointer;">&times;</button>
@@ -151,44 +160,44 @@ galleryModal.innerHTML = `
     <div id="galleryName" style="color: #fff; margin-top: 10px; font-size: 16px;"></div>
   </div>
 `;
- 
+
 document.body.appendChild(galleryModal);
- 
+
 function updateGallery() {
   const product = products.find(p => p.id === galleryProductId);
   if (!product || !product.images || product.images.length === 0) return;
- 
+
   const main = document.getElementById('galleryMain');
   const thumbs = document.getElementById('galleryThumbs');
   const name = document.getElementById('galleryName');
- 
+
   main.src = product.images[galleryIndex];
   main.alt = product.name;
   name.textContent = product.name;
- 
+
   thumbs.innerHTML = product.images.map((src, i) => `
     <button onclick="selectGalleryImage(${i})" style="width:60px; height:60px; padding:0; border:2px solid ${i === galleryIndex ? '#fff' : 'transparent'}; background:none; border-radius:7px; overflow:hidden; cursor:pointer; flex:none;">
       <img src="${src}" alt="" style="width:100%; height:100%; object-fit:cover;">
     </button>
   `).join('');
 }
- 
+
 function openGallery(productId) {
   const product = products.find(p => p.id === productId);
   if (!product || !product.images || !product.images.length) return;
- 
+
   galleryProductId = productId;
   galleryIndex = 0;
   updateGallery();
   galleryModal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
- 
+
 function closeGallery() {
   galleryModal.style.display = 'none';
   document.body.style.overflow = '';
 }
- 
+
 function selectGalleryImage(index) {
   const product = products.find(p => p.id === galleryProductId);
   if (!product) return;
@@ -196,36 +205,36 @@ function selectGalleryImage(index) {
   galleryIndex = index;
   updateGallery();
 }
- 
+
 function nextGalleryImage() {
   const product = products.find(p => p.id === galleryProductId);
   if (!product || !product.images.length) return;
   galleryIndex = (galleryIndex + 1) % product.images.length;
   updateGallery();
 }
- 
+
 function previousGalleryImage() {
   const product = products.find(p => p.id === galleryProductId);
   if (!product || !product.images.length) return;
   galleryIndex = (galleryIndex - 1 + product.images.length) % product.images.length;
   updateGallery();
 }
- 
+
 document.getElementById('galleryClose').addEventListener('click', closeGallery);
 document.getElementById('galleryNext').addEventListener('click', nextGalleryImage);
 document.getElementById('galleryPrev').addEventListener('click', previousGalleryImage);
- 
+
 galleryModal.addEventListener('click', function (e) {
   if (e.target === galleryModal) closeGallery();
 });
- 
+
 document.addEventListener('keydown', function (e) {
   if (galleryModal.style.display !== 'flex') return;
   if (e.key === 'Escape') closeGallery();
   if (e.key === 'ArrowRight') nextGalleryImage();
   if (e.key === 'ArrowLeft') previousGalleryImage();
 });
- 
+
 // ============================================
 // RENDER PRODUCTS
 // ============================================
@@ -235,17 +244,17 @@ function renderProducts() {
       const firstAvailable = p.sizes.find(s => stockRemaining(p.id, s.size) > 0);
       selectedSizes[p.id] = firstAvailable ? firstAvailable.size : p.sizes[0].size;
     }
- 
+
     const chips = p.sizes.map(s => {
       const remaining = stockRemaining(p.id, s.size);
       const isSelected = selectedSizes[p.id] === s.size;
       return `<button class="size-chip${isSelected ? ' selected' : ''}" onclick="selectSize(${p.id}, '${s.size}')" ${remaining <= 0 ? 'disabled' : ''}>${s.size}</button>`;
     }).join('');
- 
+
     const anyStockLeft = p.sizes.some(s => stockRemaining(p.id, s.size) > 0);
     const media = p.img ? `<img src="${p.img}" alt="${p.name}" loading="lazy">` : `<i class="${p.icon}"></i>`;
     const imageCount = p.images ? p.images.length : 0;
- 
+
     return `
       <div class="product-card" data-id="${p.id}">
         <div class="product-img" ${imageCount ? `onclick="openGallery(${p.id})" style="cursor:pointer;"` : ''}>
@@ -269,22 +278,22 @@ function renderProducts() {
     `;
   }).join('');
 }
- 
+
 function selectSize(productId, size) {
   selectedSizes[productId] = size;
   renderProducts();
 }
- 
+
 // ============================================
 // ADD TO CART
 // ============================================
 function addToCart(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
- 
+
   const size = selectedSizes[productId];
   if (stockRemaining(productId, size) <= 0) return;
- 
+
   const existing = cart.find(item => item.id === productId && item.size === size);
   if (existing) {
     existing.qty += 1;
@@ -300,42 +309,42 @@ function addToCart(productId) {
       qty: 1,
     });
   }
- 
+
   updateCart();
   renderProducts();
- 
+
   document.getElementById('cart').scrollIntoView({ behavior: 'smooth' });
 }
- 
+
 function removeFromCart(productId, size) {
   cart = cart.filter(item => !(item.id === productId && item.size === size));
   updateCart();
   renderProducts();
 }
- 
+
 function changeQty(productId, size, delta) {
   const item = cart.find(i => i.id === productId && i.size === size);
   if (!item) return;
- 
+
   if (delta > 0 && stockRemaining(productId, size) <= 0) return;
- 
+
   item.qty += delta;
   if (item.qty <= 0) {
     removeFromCart(productId, size);
     return;
   }
- 
+
   updateCart();
   renderProducts();
 }
- 
+
 // ============================================
 // UPDATE CART
 // ============================================
 function updateCart() {
   const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
   navCartCount.textContent = totalItems;
- 
+
   if (cart.length === 0) {
     cartEmptyEl.classList.add('visible');
     cartItemsEl.style.display = 'none';
@@ -343,13 +352,13 @@ function updateCart() {
     cartEmptyEl.classList.remove('visible');
     cartItemsEl.style.display = 'flex';
   }
- 
+
   cartItemsEl.innerHTML = cart.map(item => {
     const media = item.img
       ? `<img src="${item.img}" alt="${item.name}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`
       : `<i class="${item.icon}"></i>`;
     const canIncrease = stockRemaining(item.id, item.size) > 0;
- 
+
     return `
       <div class="cart-item" data-id="${item.id}" data-size="${item.size}">
         <div class="cart-item-img">${media}</div>
@@ -369,10 +378,10 @@ function updateCart() {
       </div>
     `;
   }).join('');
- 
+
   updateBilling();
 }
- 
+
 // ============================================
 // UPDATE BILLING (no tax — subtotal + delivery only)
 // ============================================
@@ -380,12 +389,12 @@ function updateBilling() {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const deliveryFee = subtotal > 0 ? (DELIVERY_FEES[selectedDeliveryArea] || 0) : 0;
   const total = subtotal + deliveryFee;
- 
+
   billingSubtotal.textContent = `${CURRENCY}${subtotal.toFixed(0)}`;
   billingShipping.textContent = deliveryFee > 0 ? `${CURRENCY}${deliveryFee}` : 'Free';
   billingTotal.textContent = `${CURRENCY}${total.toFixed(0)}`;
 }
- 
+
 // Keep the cart's shipping/total in sync as soon as the customer
 // picks a delivery area on the checkout form below.
 const deliveryAreaEl = document.getElementById('deliveryArea');
@@ -395,20 +404,41 @@ if (deliveryAreaEl) {
     updateBilling();
   });
 }
- 
+
+// Show bKash/Nagad payment instructions + Transaction ID field
+// only when one of those methods is selected.
+const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+const paymentInstructions = document.getElementById('paymentInstructions');
+const paymentInstructionsText = document.getElementById('paymentInstructionsText');
+
+function updatePaymentInstructions() {
+  const selected = document.querySelector('input[name="paymentMethod"]:checked');
+  const method = selected ? selected.value : 'cod';
+
+  if (method === 'bkash' || method === 'nagad') {
+    const label = PAYMENT_LABELS[method];
+    paymentInstructionsText.innerHTML = `Send the total amount to <strong>${PAYMENT_NUMBER}</strong> (${label} — Personal/Send Money), then enter the Transaction ID below.`;
+    paymentInstructions.style.display = 'block';
+  } else {
+    paymentInstructions.style.display = 'none';
+  }
+}
+
+paymentRadios.forEach(radio => radio.addEventListener('change', updatePaymentInstructions));
+
 // ============================================
 // CHECKOUT FORM — simple confirmation, no WhatsApp
 // ============================================
 checkoutForm.addEventListener('submit', function (e) {
   e.preventDefault();
- 
+
   const name = document.getElementById('custName');
   const phone = document.getElementById('custPhone');
   const address = document.getElementById('custAddress');
   const deliveryArea = document.getElementById('deliveryArea');
- 
+
   let valid = true;
- 
+
   // Name
   if (name.value.trim() === '') {
     name.classList.add('error');
@@ -418,7 +448,7 @@ checkoutForm.addEventListener('submit', function (e) {
     name.classList.remove('error');
     document.getElementById('errName').classList.remove('visible');
   }
- 
+
   // Phone
   const phonePattern = /^01[3-9]\d{8}$/;
   const cleanPhone = phone.value.trim().replace(/\s+/g, '');
@@ -430,7 +460,7 @@ checkoutForm.addEventListener('submit', function (e) {
     phone.classList.remove('error');
     document.getElementById('errPhone').classList.remove('visible');
   }
- 
+
   // Address
   if (address.value.trim() === '') {
     address.classList.add('error');
@@ -440,7 +470,7 @@ checkoutForm.addEventListener('submit', function (e) {
     address.classList.remove('error');
     document.getElementById('errAddress').classList.remove('visible');
   }
- 
+
   // Delivery area
   if (!deliveryArea || deliveryArea.value === '') {
     if (deliveryArea) deliveryArea.classList.add('error');
@@ -448,27 +478,53 @@ checkoutForm.addEventListener('submit', function (e) {
   } else if (deliveryArea) {
     deliveryArea.classList.remove('error');
   }
- 
+
+  // Payment method + Transaction ID (only required for bKash/Nagad)
+  const paymentSelected = document.querySelector('input[name="paymentMethod"]:checked');
+  const paymentMethod = paymentSelected ? paymentSelected.value : 'cod';
+  const txnId = document.getElementById('txnId');
+
+  if (paymentMethod === 'bkash' || paymentMethod === 'nagad') {
+    if (!txnId.value.trim()) {
+      txnId.classList.add('error');
+      document.getElementById('errTxnId').classList.add('visible');
+      valid = false;
+    } else {
+      txnId.classList.remove('error');
+      document.getElementById('errTxnId').classList.remove('visible');
+    }
+  } else if (txnId) {
+    txnId.classList.remove('error');
+    document.getElementById('errTxnId').classList.remove('visible');
+  }
+
   if (!valid) return;
- 
+
   if (cart.length === 0) {
     alert('Your cart is empty. Please add a product first.');
     return;
   }
- 
+
   // Show a plain thank-you confirmation — no WhatsApp redirect.
   // You'll need to check in with the customer manually using the
-  // name, phone, and address they entered above.
+  // name, phone, address, and payment method they entered above.
   document.getElementById('confirmName').textContent = name.value.trim();
   document.getElementById('confirmPhone').textContent = cleanPhone;
- 
+
+  const detailEl = document.getElementById('confirmDetailText');
+  if (paymentMethod === 'cod') {
+    detailEl.innerHTML = `You'll pay <strong>Cash on Delivery</strong>. We'll contact you at <span id="confirmPhone">${cleanPhone}</span> to confirm delivery details.`;
+  } else {
+    detailEl.innerHTML = `We've noted your <strong>${PAYMENT_LABELS[paymentMethod]}</strong> payment (Txn ID: ${txnId.value.trim()}). We'll verify it and contact you at <span id="confirmPhone">${cleanPhone}</span> shortly.`;
+  }
+
   checkoutForm.style.display = 'none';
   document.getElementById('orderConfirmation').classList.add('visible');
- 
+
   cart = [];
   updateCart();
 });
- 
+
 // ============================================
 // RESET CHECKOUT
 // ============================================
@@ -476,10 +532,11 @@ function resetCheckout() {
   checkoutForm.reset();
   checkoutForm.style.display = 'flex';
   selectedDeliveryArea = '';
+  paymentInstructions.style.display = 'none';
   document.getElementById('orderConfirmation').classList.remove('visible');
   document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
 }
- 
+
 // ============================================
 // MOBILE MENU
 // ============================================
@@ -487,14 +544,14 @@ menuToggle.addEventListener('click', function () {
   this.classList.toggle('active');
   navLinks.classList.toggle('open');
 });
- 
+
 document.querySelectorAll('.nav-link').forEach(link => {
   link.addEventListener('click', function () {
     menuToggle.classList.remove('active');
     navLinks.classList.remove('open');
   });
 });
- 
+
 // ============================================
 // NAVBAR SCROLL EFFECT
 // ============================================
@@ -505,21 +562,21 @@ window.addEventListener('scroll', function () {
     navbar.classList.remove('scrolled');
   }
 });
- 
+
 // ============================================
 // ACTIVE NAV LINK
 // ============================================
 const sections = document.querySelectorAll('section[id]');
- 
+
 function setActiveNav() {
   const scrollY = window.scrollY + 100;
- 
+
   sections.forEach(section => {
     const top = section.offsetTop;
     const height = section.offsetHeight;
     const id = section.getAttribute('id');
     const link = document.querySelector(`.nav-link[href="#${id}"]`);
- 
+
     if (link) {
       if (scrollY >= top && scrollY < top + height) {
         document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -528,12 +585,11 @@ function setActiveNav() {
     }
   });
 }
- 
+
 window.addEventListener('scroll', setActiveNav);
- 
+
 // ============================================
 // INIT
 // ============================================
 renderProducts();
 updateCart();
- 
