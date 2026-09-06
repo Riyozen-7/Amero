@@ -75,6 +75,39 @@ const products = [
       { size: 'XL', stock: 1 }
     ],
   },
+  {
+    id: 5,
+    name: 'Premium Old Money Knitted Shirt',
+    desc: 'Chest-44 · Length-27 · Quality top notch 💯',
+    price: 800,
+    icon: 'fa-solid fa-shirt',
+    img: 'images/product-5/front.jpg.jpeg',
+    images: [
+      'images/product-5/front.jpg.jpeg',
+      'images/product-5/side.jpg.jpeg',
+      'images/product-5/close.jpg.jpeg'
+    ],
+    sizes: [
+      { size: 'L', stock: 1 },
+      { size: 'XL', stock: 1 }
+    ],
+  },
+  {
+    id: 6,
+    name: 'Premium Old Money Waffle-Knit Shirt',
+    desc: 'Chest-42 · Length-26 · Quality top notch 💯',
+    price: 800,
+    icon: 'fa-solid fa-shirt',
+    img: 'images/product-6/front.jpg.jpg',
+    images: [
+      'images/product-6/front.jpg.jpg',
+      'images/product-6/close.jpg.jpg'
+    ],
+    sizes: [
+      { size: 'M', stock: 1 },
+      { size: 'L', stock: 1 }
+    ],
+  },
 ];
 
 const CURRENCY = '৳';
