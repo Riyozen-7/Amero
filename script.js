@@ -88,7 +88,6 @@ const products = [
       'images/product-5/close.jpg.jpeg'
     ],
     sizes: [
-      { size: 'L', stock: 1 },
       { size: 'XL', stock: 1 }
     ],
   },
@@ -104,7 +103,6 @@ const products = [
       'images/product-6/close.jpg.jpg'
     ],
     sizes: [
-      { size: 'M', stock: 1 },
       { size: 'L', stock: 1 }
     ],
   },
