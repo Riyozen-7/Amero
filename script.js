@@ -644,6 +644,101 @@ function setActiveNav() {
 window.addEventListener('scroll', setActiveNav);
 
 // ============================================
+// MOTION ENHANCEMENTS — scroll reveal + interaction feedback
+// (everything below is new; nothing above was changed)
+// ============================================
+
+// Track which cart line was just touched, so only that one pulses
+// instead of every item flashing on every cart update.
+let lastTouchedKey = null;
+function markTouched(id, size) {
+  lastTouchedKey = `${id}::${size}`;
+}
+
+// Scroll-reveal: fade/rise sections and cards into view once,
+// the first time they cross into the viewport.
+function initScrollReveal() {
+  const revealTargets = document.querySelectorAll(
+    '.section-header, .product-card, .billing-card, .checkout-form, .brand-quote'
+  );
+
+  revealTargets.forEach(el => el.classList.add('reveal'));
+
+  // Stagger the product cards left-to-right, top-to-bottom —
+  // one deliberate sequence, not scattered per-element timing.
+  document.querySelectorAll('.product-card').forEach((card, i) => {
+    card.style.setProperty('--stagger', i);
+  });
+
+  if (!('IntersectionObserver' in window)) {
+    // Fallback for very old browsers: just show everything.
+    revealTargets.forEach(el => el.classList.add('in-view'));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  revealTargets.forEach(el => observer.observe(el));
+}
+
+// Re-wrap renderProducts so every re-render (size change, stock
+// update) re-applies the reveal/stagger setup to the fresh cards.
+const _renderProducts = renderProducts;
+renderProducts = function () {
+  _renderProducts();
+  initScrollReveal();
+};
+
+// Re-wrap addToCart to mark which line changed, and to give the
+// clicked button a brief success flash instead of an instant cart jump.
+const _addToCart = addToCart;
+addToCart = function (productId) {
+  markTouched(productId, selectedSizes[productId]);
+  const btn = document.querySelector(`.product-card[data-id="${productId}"] .btn-primary`);
+  _addToCart(productId);
+  if (btn) {
+    btn.classList.add('added');
+    setTimeout(() => btn.classList.remove('added'), 600);
+  }
+};
+
+// Re-wrap changeQty so quantity edits also mark the touched line.
+const _changeQty = changeQty;
+changeQty = function (productId, size, delta) {
+  markTouched(productId, size);
+  _changeQty(productId, size, delta);
+};
+
+// Re-wrap updateCart to pulse only the most recently touched line,
+// and give its quantity number a quick pop.
+const _updateCart = updateCart;
+updateCart = function () {
+  _updateCart();
+  if (lastTouchedKey) {
+    const [id, size] = lastTouchedKey.split('::');
+    const row = document.querySelector(`.cart-item[data-id="${id}"][data-size="${size}"]`);
+    if (row) {
+      row.classList.add('just-touched');
+      setTimeout(() => row.classList.remove('just-touched'), 450);
+      const qtyEl = row.querySelector('.cart-item-qty');
+      if (qtyEl) {
+        qtyEl.classList.add('pulse');
+        setTimeout(() => qtyEl.classList.remove('pulse'), 280);
+      }
+    }
+  }
+};
+
+document.addEventListener('DOMContentLoaded', initScrollReveal);
+
+// ============================================
 // INIT
 // ============================================
 renderProducts();
