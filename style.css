@@ -1178,3 +1178,117 @@ input, textarea, button {
     justify-content: center;
   }
 }
+
+/* ============================================
+   MOTION ENHANCEMENTS — smoothness & polish
+   (everything below is new; nothing above was changed)
+   ============================================ */
+
+:root {
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scroll-reveal: elements rise into place once, on first entry */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.8s var(--ease-smooth), transform 0.8s var(--ease-smooth);
+}
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Product cards stagger left-to-right, top-to-bottom — one deliberate sequence */
+.product-card.reveal {
+  transition-delay: calc(var(--stagger, 0) * 90ms);
+}
+
+/* Hero entrance — a single orchestrated moment on page load */
+.hero-badge,
+.hero-title,
+.hero-tagline,
+.hero-desc,
+.hero-content .btn {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: heroRise 0.85s var(--ease-smooth) forwards;
+}
+.hero-badge   { animation-delay: 0.05s; }
+.hero-title   { animation-delay: 0.18s; }
+.hero-tagline { animation-delay: 0.32s; }
+.hero-desc    { animation-delay: 0.44s; }
+.hero-content .btn { animation-delay: 0.56s; }
+@keyframes heroRise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Smoother, slightly springier product-card hover */
+.product-card {
+  transition: transform 0.5s var(--ease-smooth), box-shadow 0.5s var(--ease-smooth);
+}
+.product-card:hover {
+  transform: translateY(-8px);
+}
+.product-img img {
+  transition: transform 0.6s var(--ease-smooth);
+}
+.product-card:hover .product-img img {
+  transform: scale(1.045);
+}
+
+/* Buttons: soft press feedback, smoother curve */
+.btn {
+  transition: transform 0.35s var(--ease-smooth), background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+.btn:active {
+  transform: scale(0.96);
+}
+
+/* Add-to-cart success flash, replaces the jarring instant jump */
+@keyframes addedFlash {
+  0%   { background-color: var(--clr-light-brown); }
+  45%  { background-color: var(--clr-success); }
+  100% { background-color: var(--clr-light-brown); }
+}
+.btn-primary.added {
+  animation: addedFlash 0.6s ease;
+}
+
+/* Cart item — brief settle-in pulse when added or changed */
+@keyframes itemPulse {
+  0%   { transform: scale(0.97); opacity: 0.65; }
+  60%  { transform: scale(1.008); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.cart-item.just-touched {
+  animation: itemPulse 0.45s var(--ease-smooth);
+}
+
+/* Quantity number — quick pulse on change */
+@keyframes qtyPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.22); }
+}
+.cart-item-qty.pulse {
+  display: inline-block;
+  animation: qtyPulse 0.28s var(--ease-smooth);
+}
+
+/* Size chip selection, smoother + slight scale */
+.size-chip {
+  transition: border-color 0.3s var(--ease-smooth), background 0.35s var(--ease-smooth),
+              color 0.35s var(--ease-smooth), transform 0.25s var(--ease-smooth);
+}
+.size-chip.selected {
+  transform: scale(1.04);
+}
+
+/* Respect people who've asked their OS for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .hero-badge, .hero-title, .hero-tagline, .hero-desc, .hero-content .btn,
+  .product-card, .product-img img, .btn, .cart-item, .cart-item-qty, .size-chip {
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
